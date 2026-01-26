@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { WaterLevelChart } from './component/WaterLevelChart';
-import{statusCard} from './component/StatusCard';
+import{StatusCard} from './component/StatusCard';
 function App() {
   return (
     // ใช้ class 'container' จาก index.css เพื่อจัดกึ่งกลาง
@@ -15,13 +15,14 @@ function App() {
           ระบบบริหารจัดการน้ำและแจ้งเตือนภัยพิบัติอัจฉริยะ อบจ.ลำพูน
         </p>
       </div>
-
+    <div>
+      <StatusCard />
+    </div>
       {/* --- พื้นที่วางกราฟ --- */}
       <div style={{ display: 'grid', gap: '24px' }}>
         
         {/* เรียกใช้ Component กราฟที่เราทำไว้ */}
         <WaterLevelChart />
-
         {/* (อนาคต) เดี๋ยวเราจะเอากราฟน้ำฝน หรือตารางมาวางต่อท้ายตรงนี้ */}
         {/* <RainFallChart /> */}
         
