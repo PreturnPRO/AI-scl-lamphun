@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
-import { Database, SensorData } from './database';
+import { Database } from './database';
 import dotenv from 'dotenv';
-import axios from 'axios';
+import { Device, DeviceInfo } from './device';
 
 dotenv.config({ path: __dirname + '/../.env' });
 
@@ -24,48 +24,62 @@ db.init().then(() => {
     console.error('Please ensure MySQL is running on', `${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT ? Number(process.env.DB_PORT) : 4000}`);
 });
 
+const monitors: Set<Device> = new Set<Device>();
+
+function loadMonitors() {
+    db.getDeviceList().then((devices: DeviceInfo[]) => {
+        devices.forEach((device) => {
+            const monitor = new Device({
+                deviceId: device.deviceId,
+                deviceSecretKey: device.deviceSecretKey,
+                customName: device.customName || undefined,
+                deviceLocation: (device.deviceLocation && device.deviceLocation.latitude !== null && device.deviceLocation.longitude !== null) ? {
+                    latitude: device.deviceLocation.latitude,
+                    longitude: device.deviceLocation.longitude
+                } : undefined,
+                monitorItem: device.monitorItem
+            });
+            monitors.add(monitor);
+        });
+        console.log(`Loaded ${monitors.size} monitors from database.`);
+    }).catch((err) => {
+        console.error('Failed to load devices from database:', err.message);
+    });
+}
+
+loadMonitors();
+
 app.get('/api/device/latest', async (req: Request, res: Response) => {
-    const { id, key, monitor_name } = req.query;
-    try {
-        const response = await axios.post(
-            'https://www.ruhrtec.cn/http/v2/query/device/latest',
-            {
-                deviceId: id,
-                deviceSecretKey: key,
-                monitorItem: monitor_name
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-
-        if (response.data?.data && Array.isArray(response.data.data)) {
-            const deviceData = response.data.data.find((item: any) => item.data.length > 0);
-            if (deviceData?.data[0]) {
-                const { monitorValue, monitorTime } = deviceData.data[0];
-                const sensorData: SensorData = {
-                    monitorItem: monitor_name as string,
-                    monitorTime: new Date(monitorTime),
-                    monitorValue: Number(monitorValue)
-                };
-                await db.saveSensorData(id as string,
-                    sensorData
-                );
-                res.json({ monitorValue, monitorTime });
-                return;
-            }
-        }
-
-        res.json({ error: 'No data found' });
-        return;
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch device data', details: error instanceof Error ? error.message : error });
+    const { id } = req.query;
+    const device = Array.from(monitors).find(d => d.getInfo().deviceId === id);
+    if (device) {
+        return device.getSensorData(req, res);
+    } else {
+        return res.status(404).json({ error: 'Device not found' });
     }
 });
 
-
+app.post('/api/device/register', express.json(), async (req: Request, res: Response) => {
+    const deviceInfo = req.body;
+    try {
+        const deviceInfoTyped: DeviceInfo = {
+            deviceId: deviceInfo.id,
+            deviceSecretKey: deviceInfo.key,
+            customName: deviceInfo.customName || undefined,
+            deviceLocation: (deviceInfo.deviceLocation && deviceInfo.deviceLocation.latitude !== null && deviceInfo.deviceLocation.longitude !== null) ? {
+                latitude: deviceInfo.deviceLocation.latitude,
+                longitude: deviceInfo.deviceLocation.longitude
+            } : undefined,
+            monitorItem: deviceInfo.monitor_name
+        }
+        await db.saveDeviceInformation(deviceInfoTyped);
+        const monitor = new Device(deviceInfoTyped);
+        monitors.add(monitor);
+        return res.json({ message: 'Device registered successfully' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Failed to register device', details: error instanceof Error ? error.message : error });
+    }
+});
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);
