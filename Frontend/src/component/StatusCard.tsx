@@ -1,15 +1,32 @@
 //import { useState, useEffect } from 'react';
-import './statusCard.css';
+import './StatusCard.css';
 
-interface StatusCard {
-    //time:Date;\
-    private stationName:string|any;
-    private sensorId:string|any;
-    
-    private location:string;
+// กำหนดประเภทสถานะที่เป็นไปได้
+export type StationStatus = "normal" | "warning" | "critical";
 
-    private waterLavel:number;
-    private rainfall:number;
+export class Station {
+    constructor(
+        public id: string,
+        public name: string,
+        public waterLevel: number,
+        public rainfall: number,
+        private _status: StationStatus // ใช้ private เพื่อความปลอดภัย
+    ) {}
+
+    // Method สำหรับดึงชื่อสถานะมาใช้
+    public getStatus(): StationStatus {
+        return this._status;
+    }
+
+    // Method สำหรับดึงรหัสสีตามตัวแปร CSS ที่คุณมีในรูป (เช่น --color-status-critical)
+    public getStatusColorVariable(): string {
+        switch (this._status) {
+            case "critical": return "var(--color-status-critical, #EF4444)";
+            case "warning": return "#E67E22";
+            case "normal": return "#2ECC71";
+            default: return "#FFF";
+        }
+    }
 }
 constructor(stationName:string|any, sensorId:string|any, location:string){
     this.stationName = stationName;
@@ -31,4 +48,31 @@ function ProductCart({stationName, sensorId, waterLavel, rainfall, location}:Sta
   );
 }
 
-export default statusCard;
+const StatusCard = ({ station }: StatusCardProps) => {
+    // ดึงค่าสีจาก OOP Method
+    const statusColor = station.getStatusColorVariable();
+
+    return (
+        <div 
+            className="status-card" 
+            style={{ '--current-status-color': statusColor } as React.CSSProperties}>
+            <div className="header">
+                <span>STATION: NAME</span>
+                <h3>{station.name}</h3>
+            </div>
+            
+            <div className="data-row">
+                <div className="item">
+                    <p>ระดับน้ำ</p>
+                    <h2 className='water-level'>{station.waterLevel} <small>เมตร</small></h2>
+                </div>
+                <div className="item">
+                    <p>ปริมาณน้ำฝน</p>
+                    <h2 className='rain-level'>{station.rainfall} <small>มม./ชม.</small></h2>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default StatusCard;
