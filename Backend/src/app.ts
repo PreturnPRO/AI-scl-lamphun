@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Database, DeviceInfo, SensorData } from './database';
+import { Database, SensorData } from './database';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
@@ -7,7 +7,6 @@ dotenv.config({ path: __dirname + '/../.env' });
 
 const app = express();
 const port = 3000;
-
 
 const db: Database = new Database(
     process.env.DB_HOST || 'localhost',
@@ -23,10 +22,6 @@ db.init().then(() => {
 }).catch((err) => {
     console.error('Database initialization failed:', err.message);
     console.error('Please ensure MySQL is running on', `${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT ? Number(process.env.DB_PORT) : 4000}`);
-});
-
-app.get('/', (_req: Request, res: Response) => {
-    res.send('Hello World!');
 });
 
 app.get('/api/device/latest', async (req: Request, res: Response) => {
@@ -55,12 +50,7 @@ app.get('/api/device/latest', async (req: Request, res: Response) => {
                     monitorTime: new Date(monitorTime),
                     monitorValue: Number(monitorValue)
                 };
-                const DeviceInfo: DeviceInfo = {
-                    deviceId: id as string,
-                    deviceSecretKey: key as string,
-                    monitorItem: monitor_name as string
-                };
-                await db.saveDeviceData(DeviceInfo,
+                await db.saveSensorData(id as string,
                     sensorData
                 );
                 res.json({ monitorValue, monitorTime });
@@ -75,10 +65,7 @@ app.get('/api/device/latest', async (req: Request, res: Response) => {
     }
 });
 
-app.get('/api/device/', async (_req: Request, _res: Response) => {
-    // Placeholder for future implementation
-    _res.json({ message: 'Device list endpoint is under construction.' });
-});
+
 
 app.listen(port, () => {
     console.log(`App listening on port ${port}`);

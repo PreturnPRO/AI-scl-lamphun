@@ -42,36 +42,60 @@ class Database {
     }
 
     async init() {
-        const createSql = `
-            CREATE TABLE IF NOT EXISTS monitor_data (
-            id INT PRIMARY KEY AUTO_INCREMENT,
-            device_id VARCHAR(64) NOT NULL,
-            device_secret_key VARCHAR(255) NOT NULL,
-            monitor_item VARCHAR(64) NOT NULL,
-            monitor_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            monitor_value DOUBLE,
-            custom_name VARCHAR(255),
-            latitude DOUBLE,
-            longitude DOUBLE
+        const createDeviceSql = `
+            CREATE TABLE IF NOT EXISTS monitor_device (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                device_id VARCHAR(64) NOT NULL UNIQUE,
+                device_secret_key VARCHAR(255) NOT NULL,
+                custom_name VARCHAR(255),
+                latitude DOUBLE,
+                longitude DOUBLE
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
         `;
-        await this.pool.query(createSql);
+        const createDataSql = `
+            CREATE TABLE IF NOT EXISTS monitor_data (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                device_id VARCHAR(64) NOT NULL,
+                monitor_item VARCHAR(64) NOT NULL,
+                monitor_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                monitor_value DOUBLE,
+                FOREIGN KEY (device_id) REFERENCES monitor_device(device_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        `;
+        await this.pool.query(createDeviceSql);
+        await this.pool.query(createDataSql);
     }
 
-    async saveDeviceData(BaseDevice: DeviceInfo, data: SensorData) {
+    async saveDeviceInformation(device: DeviceInfo) {
         const insertSql = `
-            INSERT INTO monitor_data (device_id, device_secret_key, monitor_item, monitor_time, monitor_value, custom_name, latitude, longitude)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            INSERT INTO monitor_device (device_id, device_secret_key, custom_name, latitude, longitude)
+            VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                device_secret_key = VALUES(device_secret_key),
+                custom_name = VALUES(custom_name),
+                latitude = VALUES(latitude),
+                longitude = VALUES(longitude);
         `;
         const values = [
-            BaseDevice.deviceId,
-            BaseDevice.deviceSecretKey,
-            BaseDevice.monitorItem,
+            device.deviceId,
+            device.deviceSecretKey,
+            device.customName || null,
+            device.deviceLocation ? device.deviceLocation.latitiude : null,
+            device.deviceLocation ? device.deviceLocation.longitude : null
+        ];
+        await this.pool.query(insertSql, values);
+    }
+
+    async saveSensorData(deviceId: string, data: SensorData) {
+        const insertSql = `
+            INSERT INTO monitor_data (device_id, monitor_item, monitor_time, monitor_value)
+            VALUES (?, ?, ?, ?);
+        `;
+        const values = [
+            deviceId,
+            data.monitorItem,
             data.monitorTime,
-            data.monitorValue,
-            BaseDevice.customName || null,
-            BaseDevice.deviceLocation?.latitiude || null,
-            BaseDevice.deviceLocation?.longitude || null
+            data.monitorValue
         ];
         await this.pool.query(insertSql, values);
     }

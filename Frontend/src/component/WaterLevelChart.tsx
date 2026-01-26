@@ -12,7 +12,7 @@ import {
 
 import styles from './WaterLevelChart.module.css';
 
-type ChartData = {
+export interface ChartData  {
   time: string;
   value: number;
 };
