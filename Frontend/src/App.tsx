@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { WaterLevelChart } from './component/WaterLevelChart';
-import{statusCard} from './component/statusCard';
+import{statusCard} from './component/StatusCard';
 function App() {
   return (
     // ใช้ class 'container' จาก index.css เพื่อจัดกึ่งกลาง
