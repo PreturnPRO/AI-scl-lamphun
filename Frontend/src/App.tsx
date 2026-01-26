@@ -4,7 +4,6 @@ import{StatusCard} from './component/StatusCard';
 import{DataCard} from './component/DataCard';
 function App() {
   return (
-    // ใช้ class 'container' จาก index.css เพื่อจัดกึ่งกลาง
     <div className="container" style={{ marginTop: '40px', paddingBottom: '40px' }}>
       
       {/* --- ส่วนหัวข้อ --- */}
@@ -24,12 +23,7 @@ function App() {
     </div>
       {/* --- พื้นที่วางกราฟ --- */}
       <div style={{ display: 'grid', gap: '24px' }}>
-        
-        {/* เรียกใช้ Component กราฟที่เราทำไว้ */}
         <WaterLevelChart />
-        {/* (อนาคต) เดี๋ยวเราจะเอากราฟน้ำฝน หรือตารางมาวางต่อท้ายตรงนี้ */}
-        {/* <RainFallChart /> */}
-        
       </div>
 
     </div>
