@@ -1,68 +1,65 @@
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* --- Brand Colors  --- */
+  --color-brand: #0099FF;      /* ฟ้าลำพูน (Primary) */
+  --color-bg: #F3F4F6;         /* เทาอ่อน (Background) */
+  --color-surface: #FFFFFF;    /* ขาว (Card Background) */
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* --- Text Colors --- */
+  --text-primary: #111827;     /* ดำเข้ม (หัวข้อ) */
+  --text-secondary: #6B7280;   /* เทากลาง (คำอธิบาย) */
+  --text-inverse: #FFFFFF;     /* ขาว (บนปุ่ม) */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* --- Status Colors (สำหรับแจ้งเตือน) --- */
+  --status-normal: #10B981;    /* เขียว */
+  --status-warning: #F59E0B;   /* ส้ม */
+  --status-critical: #EF4444;  /* แดง */
+
+  /* --- Typography (Fonts) --- */
+  --font-ui: 'Inter', system-ui, sans-serif;
+  --font-data: 'IBM Plex Mono', monospace;
+
+  /* --- Shadows (Effect Styles) --- */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* 3. Global Reset */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  background-color: var(--color-bg);
+  color: var(--text-primary);
+  font-family: var(--font-ui); /* เริ่มต้นด้วยฟอนต์ Inter ทั้งเว็บ */
+  -webkit-font-smoothing: antialiased;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* 4. Utility Classes (ชุดคำสั่งที่เราจะเรียกใช้บ่อยๆ) */
+
+/* --- Typography Utilities --- */
+.text-h1 { font-size: 24px; font-weight: 700; line-height: 1.25; }
+.text-h2 { font-size: 20px; font-weight: 600; line-height: 1.25; }
+.text-h3 { font-size: 16px; font-weight: 500; line-height: 1.25; }
+.text-default { font-size: 14px; font-weight: 400; line-height: 1.5; }
+.text-caption { font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--text-secondary); }
+
+/* --- Data Font Utilities (IBM Plex Mono) --- */
+.text-data-lg { font-family: var(--font-data); font-size: 24px; font-weight: 700; }
+.text-data-md { font-family: var(--font-data); font-size: 14px; font-weight: 400; }
+.text-data-sm { font-family: var(--font-data); font-size: 12px; font-weight: 400; }
+
+/* --- Layout Utilities --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.card {
+  background-color: var(--color-surface);
+  border-radius: 12px; /* ความโค้งมนของการ์ด */
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
 }

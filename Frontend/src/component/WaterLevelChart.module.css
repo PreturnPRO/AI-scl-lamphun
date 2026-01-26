@@ -1,0 +1,81 @@
+/* กล่องกราฟหลัก */
+.chartCard {
+  height: 450px;
+  position: relative;
+  /* เรายังใช้ style จาก .card (Global) ได้ แต่ถ้าอยากเขียนทับเฉพาะหน้านี้ก็ใส่ตรงนี้ */
+}
+
+/* ส่วนหัว */
+.header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 16px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendLine {
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+/* Modifier classes (ใช้คู่กับ legendLine) */
+.warning { background-color: var(--status-warning); }
+.critical { background-color: var(--status-critical); }
+
+/* --- Tooltip --- */
+.customTooltip {
+  background-color: var(--color-surface);
+  padding: 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  box-shadow: var(--shadow-md);
+  min-width: 140px;
+}
+
+.tooltipTime {
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+}
+
+.tooltipValueRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tooltipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-brand);
+}
+
+.tooltipValue {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* --- States --- */
+.stateContainer {
+  height: 450px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.errorText {
+  color: var(--status-critical);
+}
