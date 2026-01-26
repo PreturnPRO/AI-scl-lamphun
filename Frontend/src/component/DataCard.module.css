@@ -1,0 +1,79 @@
+/* Container หลักของ Card */
+.cardContainer {
+  /* --- Layout (อิงตาม Figma) --- */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 312px;
+  height: 166px;
+  gap: 26px; /* ระยะห่างระหว่างหัวข้อ กับ ตัวเลข */
+  padding: 38px 27px; /* Padding ตามรูป Figma */
+  
+  /* --- Style (อิงตาม Global Design System) --- */
+  background: var(--color-surface);
+  border-radius: 40px;
+  box-shadow: var(--shadow-md);
+  
+  /* เส้นสีด้านบน (Default) */
+  border-top: 10px solid var(--status-warning);
+  
+  box-sizing: border-box;
+}
+
+/* --- Typography: หัวข้อ --- */
+.title {
+  align-self: stretch;
+  color: var(--text-primary);
+  
+  /* ฟอนต์ภาษาไทยใช้ Inter (font-ui) */
+  font-family: var(--font-ui); 
+  font-size: 20px;       /* Heading 2 */
+  font-weight: 600;      /* Semi Bold */
+  line-height: 28px;
+}
+
+/* wrapper สำหรับจัดกลุ่มตัวเลขและหน่วย */
+.valueGroup {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  align-self: stretch;
+}
+
+/* --- Typography: ตัวเลข --- */
+.value {
+  /* ตัวเลขใช้ IBM Plex Mono (font-data) */
+  font-family: var(--font-data); 
+  font-size: 24px;       /* Data Large */
+  font-weight: 700;      /* Bold */
+  line-height: 32px;
+  /* สีจะถูกเปลี่ยนตาม Theme Class ด้านล่าง */
+}
+
+/* --- Typography: หน่วย --- */
+.unit {
+  /* หน่วยภาษาไทยใช้ Inter (font-ui) */
+  font-family: var(--font-ui); 
+  font-size: 24px;       /* Data Large */
+  font-weight: 700;
+  line-height: 32px;
+  /* สีจะถูกเปลี่ยนตาม Theme Class ด้านล่าง */
+}
+
+/* --- Themes (OOP Style) --- */
+
+/* Theme: สีส้ม (เตือนภัย/Warning) */
+.themeOrange {
+  border-color: var(--status-warning);
+}
+.textOrange {
+  color: var(--status-warning);
+}
+
+/* Theme: สีฟ้า (ปกติ/Brand) */
+.themeBlue {
+  border-color: var(--color-brand);
+}
+.textBlue {
+  color: var(--color-brand);
+}
