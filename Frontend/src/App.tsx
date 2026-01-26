@@ -2,6 +2,7 @@ import { useState } from 'react'
 // ✅ แก้ไข: เอาปีกกาออกให้แล้วครับ (เพราะใช้ export default)
 import { WaterLevelChart }from './component/WaterLevelChart'; 
 import DataCard from './component/DataCard';
+import StatusCard from './component/statusCard';
 
 function App() {
   return (
