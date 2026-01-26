@@ -1,47 +1,34 @@
-import { useState, useEffect } from 'react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine
-} from 'recharts';
+//import { useState, useEffect } from 'react';
+import './statusCard.css';
 
-
-
-type statusData ={
+interface StatusCard {
     //time:Date;\
-    stationName:string;
-    sensorId:string;
-    waterLavel:number;
-    rainfall:number;
-}
+    private stationName:string|any;
+    private sensorId:string|any;
     
-const publicKey = import.meta.env.VITE_TIDB_PUBLIC_KEY as string | undefined;
-        const privateKey = import.meta.env.VITE_TIDB_PRIVATE_KEY as string | undefined;
-        const baseUrl = import.meta.env.VITE_API_ENDPOINT as string | undefined;
+    private location:string;
 
-        if (!publicKey || !privateKey || !baseUrl) {
-          console.error('Missing .env', { hasPublic: !!publicKey, hasPrivate: !!privateKey, baseUrl });
-          setError('ยังไม่ได้ตั้งค่า .env (VITE_API_URL, VITE_TIDB_PUBLIC_KEY, VITE_TIDB_PRIVATE_KEY)');
-          return;
-        }
+    private waterLavel:number;
+    private rainfall:number;
+}
+constructor(stationName:string|any,sensorId:string|any,location:string){
+    this.stationName = stationNAme;
+    this.sensorId=sensorId;
+    this.waterLavel=waterLavel;
+    this.rainfall=rainfall;
+    this.location=location;
+  }
 
-        const authString = btoa(`${publicKey}:${privateKey}`);
+    
+function ProductCart({stationName,sensorId,waterLavel,rainfall,location}:StatusCard){
+  return(
+    <div className="card">
+      <p>{stationName}</p>
+      <p>{sensorId}</p>
+      <p>ระดับน้ำ:<div className='water-lavel'></div></p>
+      <p>ปริมาณน้ำฝน:<div className='rainfaall'></div></p>
+    </div>
+  );
+}
 
-        console.log('🔑 Auth String:', authString);
-        console.log('🔗 Fetching URL:', '/api-tidb?type=water_monitor');
-
-        // ยิงเข้า localhost ที่ path /api-tidb เดี๋ยว Vite จะส่งต่อให้เอง
-        const response = await fetch(`/api-tidb?type=water_monitor`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Basic ${authString}`,
-            // 'endpoint-type': 'draft', // ลองปิดบรรทัดนี้ดูก่อน
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-        });
+export default statusCard;
