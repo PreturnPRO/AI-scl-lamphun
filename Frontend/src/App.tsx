@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { WaterLevelChart } from './component/WaterLevelChart';
-import{StatusCard} from './component/StatusCard';
+// ✅ แก้ไข: เอาปีกกาออกให้แล้วครับ (เพราะใช้ export default)
+import { WaterLevelChart }from './component/WaterLevelChart'; 
 import DataCard from './component/DataCard';
+
 function App() {
   return (
     <div className="container" style={{ marginTop: '40px', paddingBottom: '40px' }}>
@@ -15,6 +16,9 @@ function App() {
           ระบบบริหารจัดการน้ำและแจ้งเตือนภัยพิบัติอัจฉริยะ อบจ.ลำพูน
         </p>
       </div>
+
+      {/* --- ส่วนแสดงผล DataCard (เรียงแนวนอน 3 ใบ) --- */}
+      {/* ✅ วิธีแก้: เอาการ์ดทั้ง 3 ใบมาใส่ใน div ตัวเดียวกันครับ */}
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '40px' }}>
         
         {/* ใบที่ 1 */}
@@ -42,9 +46,7 @@ function App() {
         />
         
       </div>
-    <div>
-      {/*<StatusCard />*/}
-    </div>
+
       {/* --- พื้นที่วางกราฟ --- */}
       <div style={{ display: 'grid', gap: '24px' }}>
         <WaterLevelChart />
