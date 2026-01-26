@@ -11,8 +11,8 @@ interface StatusCard {
     private waterLavel:number;
     private rainfall:number;
 }
-constructor(stationName:string|any,sensorId:string|any,location:string){
-    this.stationName = stationNAme;
+constructor(stationName:string|any, sensorId:string|any, location:string){
+    this.stationName = stationName;
     this.sensorId=sensorId;
     this.waterLavel=waterLavel;
     this.rainfall=rainfall;
@@ -20,7 +20,7 @@ constructor(stationName:string|any,sensorId:string|any,location:string){
   }
 
     
-function ProductCart({stationName,sensorId,waterLavel,rainfall,location}:StatusCard){
+function ProductCart({stationName, sensorId, waterLavel, rainfall, location}:StatusCard){
   return(
     <div className="card">
       <p>{stationName}</p>
