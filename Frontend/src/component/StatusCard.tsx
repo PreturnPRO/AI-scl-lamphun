@@ -1,6 +1,8 @@
 //import { useState, useEffect } from 'react';
 import './StatusCard.css';
 
+import './StatusCard.css';
+
 // กำหนดประเภทสถานะที่เป็นไปได้
 export type StationStatus = "normal" | "warning" | "critical";
 
@@ -28,24 +30,11 @@ export class Station {
         }
     }
 }
-constructor(stationName:string|any, sensorId:string|any, location:string){
-    this.stationName = stationName;
-    this.sensorId=sensorId;
-    this.waterLavel=waterLavel;
-    this.rainfall=rainfall;
-    this.location=location;
-  }
 
-    
-function ProductCart({stationName, sensorId, waterLavel, rainfall, location}:StatusCard){
-  return(
-    <div className="card">
-      <p>{stationName}</p>
-      <p>{sensorId}</p>
-      <p>ระดับน้ำ:<div className='water-lavel'></div></p>
-      <p>ปริมาณน้ำฝน:<div className='rainfaall'></div></p>
-    </div>
-  );
+
+
+interface StatusCardProps {
+    station: Station;
 }
 
 const StatusCard = ({ station }: StatusCardProps) => {
