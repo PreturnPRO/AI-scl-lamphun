@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { WaterLevelChart } from './component/WaterLevelChart';
 import{StatusCard} from './component/StatusCard';
+import{DataCard} from './component/DataCard';
 function App() {
   return (
     // ใช้ class 'container' จาก index.css เพื่อจัดกึ่งกลาง
@@ -15,8 +16,11 @@ function App() {
           ระบบบริหารจัดการน้ำและแจ้งเตือนภัยพิบัติอัจฉริยะ อบจ.ลำพูน
         </p>
       </div>
+      <div>
+        <DataCard/>
+      </div>
     <div>
-      <StatusCard />
+      {/*<StatusCard />*/}
     </div>
       {/* --- พื้นที่วางกราฟ --- */}
       <div style={{ display: 'grid', gap: '24px' }}>
