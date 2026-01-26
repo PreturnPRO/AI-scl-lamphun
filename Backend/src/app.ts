@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { Database, DeviceInfo, SensorData } from './database';
+import { Database, SensorData } from './database';
 import dotenv from 'dotenv';
 import axios from 'axios';
 
