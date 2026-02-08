@@ -1,48 +1,15 @@
-# Express TypeScript Server
+# Elysia with Bun runtime
 
-Node.js Express server with TypeScript
-
-## Setup
-
+## Getting Started
+To get started with this template, simply paste this command into your terminal:
 ```bash
-npm install
+bun create elysia ./elysia-example
 ```
 
 ## Development
-
+To start the development server run:
 ```bash
-npm run dev
+bun run dev
 ```
 
-## Build
-
-```bash
-npm run build
-```
-
-## Production
-
-```bash
-npm start
-```
-
-## Available Scripts
-
-- `npm run dev` - Start development server with ts-node
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm start` - Run compiled production build
-- `npm run watch` - Watch mode for TypeScript compilation
-- `npm run lint` - Run ESLint
-
-## Project Structure
-
-```
-server/
-├── src/
-│   ├── index.ts       # Main server entry point
-│   └── sync.ts        # Sync functionality
-├── dist/              # Compiled JavaScript (generated)
-├── package.json
-├── tsconfig.json
-└── .eslintrc.json
-```
+Open http://localhost:3000/ with your browser to see the result.
