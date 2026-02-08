@@ -5,7 +5,7 @@ export const devies = mysqlTable("devices", {
     secretId: varchar("secretId", { length: 255 }).unique(),
     deviceKey: varchar("deviceKey", { length: 255 }),
     monitorItem: varchar("monitorItem", { length: 255 }),
-    customName: varchar("custom_name", { length: 255 }),
+    customName: varchar("customName", { length: 255 }),
     deviceName: varchar("deviceName", { length: 255 }),
     latitude: varchar("latitude", { length: 100 }),
     longitude: varchar("longitude", { length: 100 })
