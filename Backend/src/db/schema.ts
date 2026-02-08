@@ -27,3 +27,13 @@ export const sessions = mysqlTable("sessions", {
     token: varchar("token", { length: 255 }).unique(),
     expires_at: varchar("expires_at", { length: 100 })
 })
+
+export const deviceData = mysqlTable("device_data", {
+    id: serial("id").primaryKey(),
+    deviceId: varchar("deviceId", { length: 255 }),
+    monitorItem: varchar("monitorItem", { length: 255 }),
+    monitorTime: varchar("monitorTime", { length: 100 }),
+    monitorValue: varchar("monitorValue", { length: 100 }),
+    nodeId: varchar("nodeId", { length: 255 }),
+    fetchedAt: varchar("fetchedAt", { length: 100 })
+})

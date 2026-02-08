@@ -13,7 +13,7 @@ const deviceResponseItem = t.Object({
   deviceId: t.String(),
   deviceStatus: t.Number(),
   id: t.Number(),
-  customname: t.String(),
+  customname: t.Optional(t.String()),
   name: t.String(),
   sensorNumber: t.Number()
 })
@@ -89,10 +89,27 @@ export const deviceV2Routes = new Elysia({
   )
   .post(
     '/latest',
-    ({ body }) => {
-      const { deviceId } = body
+    async ({ body }) => {
+      const baseUrl = process.env.MAIN_STREAM_URL
 
-      return buildEmptyResponse(deviceId)
+      if (!baseUrl) {
+        return new Response('MAIN_STREAM_URL is not set', { status: 500 })
+      }
+
+      const response = await fetch(`${baseUrl}/latest`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        return new Response(text, { status: response.status })
+      }
+
+      return await response.json()
     },
     {
       body: t.Object({
