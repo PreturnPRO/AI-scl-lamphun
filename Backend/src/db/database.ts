@@ -1,44 +1,40 @@
 import mysql from 'mysql2/promise'
-import { drizzle, type MySql2Database } from 'drizzle-orm/mysql2'
-import { DatabaseConfig } from '../config/DatabaseConfig'
+import { drizzle } from 'drizzle-orm/mysql2'
 
-export class Database {
-  private readonly pool: mysql.Pool
-  private connection: MySql2Database | null = null
+const sslEnabled = (process.env.DB_SSL ?? 'true') === 'true'
+const sslCa = process.env.DB_SSL_CA
 
-  constructor(private readonly config: DatabaseConfig) {
-    this.pool = mysql.createPool({
-      host: config.host,
-      port: config.port,
-      user: config.username,
-      password: config.password,
-      database: config.database
-    })
-  }
-
-  async connect() {
-    if (this.connection) return this.connection
-
-    const connection = await mysql.createConnection({
-      host: this.config.host,
-      port: this.config.port,
-      user: this.config.username,
-      password: this.config.password
-    })
-
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${this.config.database}\``)
-    await connection.end()
-
-    this.connection = drizzle(this.pool)
-
-    return this.connection
-  }
-
-  get db() {
-    if (!this.connection) {
-      throw new Error('Database has not been connected yet')
+const dbPort = process.env.DB_PORT ? Number(process.env.DB_PORT) : undefined
+const sslConfig = sslEnabled
+  ? {
+      rejectUnauthorized: true,
+      ca: sslCa ? sslCa : undefined
     }
+  : undefined
 
-    return this.connection
-  }
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: dbPort,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  ssl: sslConfig
+});
+
+export async function initialize() {
+  const database = process.env.DB_DATABASE;
+  if (!database) throw new Error("DB_DATABASE is not set");
+
+  const connection = await mysql.createConnection({
+    host: process.env.DB_HOST,
+    port: dbPort,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    ssl: sslConfig
+  });
+
+  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\``);
+  await connection.end();
+
+  return drizzle(pool);
 }

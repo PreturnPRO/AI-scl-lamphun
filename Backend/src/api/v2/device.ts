@@ -1,5 +1,4 @@
 import { Elysia, t } from 'elysia'
-import type { DeviceController } from '../../controllers/DeviceController'
 
 const deviceDataItem = t.Object({
   monitorItem: t.String(),
@@ -26,51 +25,81 @@ const deviceResponseSchema = t.Object({
   status: t.String()
 })
 
-export const createDeviceRoutes = (controller: DeviceController) =>
-  new Elysia({
-    prefix: '/api/v2/device'
-  })
-    .post(
-      '/',
-      controller.getStatus,
-      {
-        body: t.Object({
-          deviceId: t.String(),
-          deviceSecretKey: t.String(),
-          minitorItem: t.String(),
-          start: t.Number(),
-          end: t.Number()
-        }),
-        response: deviceResponseSchema
-      }
-    )
-    .post(
-      '/batch',
-      controller.getBatchStatus,
-      {
-        body: t.Object({
-          deviceList: t.Array(
-            t.Object({
-              deviceId: t.String(),
-              deviceSecretKey: t.String()
-            })
-          ),
-          monitorItem: t.Array(t.String()),
-          start: t.Number(),
-          end: t.Number()
-        }),
-        response: deviceResponseSchema
-      }
-    )
-    .post(
-      '/latest',
-      controller.getLatest,
-      {
-        body: t.Object({
-          deviceId: t.String(),
-          deviceSecretKey: t.String(),
-          monitorItem: t.String()
-        }),
-        response: deviceResponseSchema
-      }
-    )
+const buildEmptyResponse = (deviceId: string) => ({
+  code: 0,
+  data: [
+    {
+      data: [],
+      dataStatus: 0,
+      deviceId,
+      deviceStatus: 0,
+      id: 0,
+      customname: '',
+      name: '',
+      sensorNumber: 0
+    }
+  ],
+  message: 'ok',
+  status: 'ok'
+})
+
+export const deviceV2Routes = new Elysia({
+  prefix: '/api/v2/device'
+})
+  .post(
+    '/',
+    ({ body }) => {
+      const { deviceId } = body
+
+      return buildEmptyResponse(deviceId)
+    },
+    {
+      body: t.Object({
+        deviceId: t.String(),
+        deviceSecretKey: t.String(),
+        minitorItem: t.String(),
+        start: t.Number(),
+        end: t.Number()
+      }),
+      response: deviceResponseSchema
+    }
+  )
+  .post(
+    '/batch',
+    ({ body }) => {
+      const firstDevice = body.deviceList[0]
+      const deviceId = firstDevice ? firstDevice.deviceId : ''
+
+      return buildEmptyResponse(deviceId)
+    },
+    {
+      body: t.Object({
+        deviceList: t.Array(
+          t.Object({
+            deviceId: t.String(),
+            deviceSecretKey: t.String()
+          })
+        ),
+        monitorItem: t.Array(t.String()),
+        start: t.Number(),
+        end: t.Number()
+      }),
+      response: deviceResponseSchema
+    }
+  )
+  .post(
+    '/latest',
+    ({ body }) => {
+      const { deviceId } = body
+
+      return buildEmptyResponse(deviceId)
+    },
+    {
+      body: t.Object({
+        deviceId: t.String(),
+        deviceSecretKey: t.String(),
+        monitorItem: t.String()
+      }),
+      response: deviceResponseSchema
+    }
+  )
