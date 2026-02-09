@@ -28,7 +28,16 @@ type MainStreamBatchResponse = {
   status: string
 }
 
-const hourMs = 60 * 60 * 1000
+const hourMs = 30 * 60 * 1000
+
+const translateMainStreamMessage = (message: string) => {
+  const translations: Record<string, string> = {
+    '当前ip并发查询限制为1次,每秒钟查询限制为1次,每分钟查询限制为10次,限制条件触发':
+      'Rate limit triggered: 1 concurrent, 1 per second, 10 per minute.'
+  }
+
+  return translations[message] ?? message
+}
 
 const buildDevicesFromEnv = (): MainStreamDevice[] => {
   const devices: MainStreamDevice[] = []
@@ -84,7 +93,20 @@ const fetchBatch = async (
 
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(`Main stream batch failed: ${response.status} ${text}`)
+    let translated = text
+
+    try {
+      const json = JSON.parse(text) as { message?: string }
+      if (json.message) {
+        translated = translateMainStreamMessage(json.message)
+      }
+    } catch {
+      translated = translateMainStreamMessage(text)
+    }
+
+    throw new Error(
+      `Main stream batch failed: ${response.status} ${translated}`
+    )
   }
 
   return (await response.json()) as MainStreamBatchResponse
@@ -94,15 +116,23 @@ const storeBatch = async (
   database: MySql2Database,
   payload: MainStreamBatchResponse
 ) => {
-  const fetchedAt = new Date().toISOString()
+  if (!payload || !Array.isArray(payload.data)) {
+    const translated = payload?.message
+      ? translateMainStreamMessage(payload.message)
+      : undefined
+    console.warn('Main stream payload missing data field', {
+      ...payload,
+      translatedMessage: translated
+    })
+    return
+  }
+
   const rows = payload.data.flatMap((device) =>
     device.data.map((item) => ({
       deviceId: device.deviceId,
       monitorItem: item.monitorItem,
       monitorTime: item.monitorTime,
       monitorValue: item.monitorValue,
-      nodeId: item.nodeId ?? null,
-      fetchedAt
     }))
   )
 
@@ -137,11 +167,11 @@ export const startMainStreamSync = (
     try {
       const payload = await fetchBatch(baseUrl, devices, start, end)
       await storeBatch(database, payload)
+      console.log('Main stream sync completed successfully')
     } catch (error) {
       console.error('Main stream sync failed', error)
     }
   }
-
   void runSync()
   setInterval(runSync, intervalMs)
 }
