@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './DataCard.module.css';
+import styles from '../styles/DataCard.module.css';
 
 interface DataCardProps {
   title: string;          // ชื่อหัวข้อการ์ด
