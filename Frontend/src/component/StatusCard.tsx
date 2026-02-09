@@ -1,5 +1,5 @@
 //import { useState, useEffect } from 'react';
-import './StatusCard.css';
+import '../styles/StatusCard.module.css';
 
 // กำหนดประเภทสถานะที่เป็นไปได้
 export type StationStatus = "normal" | "warning" | "critical";

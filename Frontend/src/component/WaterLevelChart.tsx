@@ -1,3 +1,4 @@
+import styles from '../styles/WaterLevelChart.module.css';
 import React, { useEffect, useState } from "react";
 import {
   AreaChart,
@@ -9,8 +10,6 @@ import {
   ResponsiveContainer,
   ReferenceLine
 } from 'recharts';
-
-import styles from './WaterLevelChart.module.css';
 
 export interface ChartData  {
   time: string;
