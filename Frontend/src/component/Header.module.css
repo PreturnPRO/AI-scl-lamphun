@@ -1,0 +1,33 @@
+/* src/component/Header/Header.module.css */
+
+.headerContainer {
+  /* --- Layout --- */
+  display: flex;
+  align-items: center;
+  
+  /* เปลี่ยนจาก width: 1440px เป็น 100% เพื่อให้ยาวเต็มจอเสมอ */
+  width: 100%; 
+  
+  /* Padding: ตัดค่าขวา (1265px) ออก เพราะเราใช้ Flexbox จัดการพื้นที่แทน */
+  padding: 23px 43px 24px 43px;
+  
+  /* --- Style --- */
+  /* ใช้ตัวแปรสี ถ้าไม่มีให้ใช้สีน้ำเงินเข้มตาม Code (#1E40AF) */
+  background: var(--brand-secondary, #1E40AF);
+  
+  /* ป้องกันการล้นขอบ */
+  box-sizing: border-box;
+  
+  /* (เพิ่มเติม) จัดการ Z-Index เพื่อให้ Header ลอยอยู่บนสุดเสมอ */
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* แถม: Class สำหรับใส่ Logo หรือชื่อเว็บ */
+.logoText {
+  color: #FFFFFF; /* สีขาว */
+  font-family: var(--font-ui); /* ใช้ฟอนต์ Inter */
+  font-size: 24px;
+  font-weight: 700;
+}
