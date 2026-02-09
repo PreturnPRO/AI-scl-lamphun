@@ -33,7 +33,5 @@ export const deviceData = mysqlTable("device_data", {
     deviceId: varchar("deviceId", { length: 255 }),
     monitorItem: varchar("monitorItem", { length: 255 }),
     monitorTime: varchar("monitorTime", { length: 100 }),
-    monitorValue: varchar("monitorValue", { length: 100 }),
-    nodeId: varchar("nodeId", { length: 255 }),
-    fetchedAt: varchar("fetchedAt", { length: 100 })
+    monitorValue: varchar("monitorValue", { length: 100 })
 })

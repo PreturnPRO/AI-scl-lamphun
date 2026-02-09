@@ -34,6 +34,47 @@ export async function initialize() {
   });
 
   await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\``);
+  await connection.query(`USE \`${database}\``);
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS devices (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      secretId VARCHAR(255) UNIQUE,
+      deviceKey VARCHAR(255),
+      monitorItem VARCHAR(255),
+      customName VARCHAR(255),
+      deviceName VARCHAR(255),
+      latitude VARCHAR(100),
+      longitude VARCHAR(100)
+    )
+  `);
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      firstname VARCHAR(255),
+      lastname VARCHAR(255),
+      username VARCHAR(255) UNIQUE,
+      email VARCHAR(255) UNIQUE,
+      role VARCHAR(100),
+      password VARCHAR(255)
+    )
+  `);
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS sessions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT,
+      token VARCHAR(255) UNIQUE,
+      expires_at VARCHAR(100)
+    )
+  `);
+  await connection.query(`
+    CREATE TABLE IF NOT EXISTS device_data (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      deviceId VARCHAR(255),
+      monitorItem VARCHAR(255),
+      monitorTime VARCHAR(100),
+      monitorValue VARCHAR(100)
+    )
+  `);
   await connection.end();
 
   return drizzle(pool);
