@@ -283,6 +283,7 @@ erDiagram
         uuid user_id FK
         uuid device_id FK
         timestamp created_at
+        string unique_index "user_id + device_id"
     }
 
     device_data {
@@ -291,14 +292,7 @@ erDiagram
         string monitorItem
         timestamp monitorTime
         float monitorValue
-    }
-
-    device_data {
-        unique_index "deviceId + monitorTime"
-    }
-
-    device_owners {
-        unique_index "user_id + device_id"
+        string unique_index "deviceId + monitorTime"
     }
 
     cache_entries {
