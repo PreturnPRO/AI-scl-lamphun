@@ -4,20 +4,19 @@ import Navbar from './components/Navbar'
 import LoginPage from './pages/LoginPage.tsx';
 
 function App() {
-  // --- [TEMP BYPASS LOGIN] ---
-  // บังคับให้เป็น true ชั่วคราวเพื่อเทส UI โดยไม่ต้องใช้ Tailscale
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-  // ---------------------------
+  const BYPASS_LOGIN =
+    import.meta.env.DEV && import.meta.env.VITE_BYPASS_LOGIN === 'true';
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(BYPASS_LOGIN);
   
   const [userId, setUserId] = useState<number | null>(null); 
   const [isLoading, setIsLoading] = useState(true);
 
   const checkSession = async () => {
-    // --- [TEMP BYPASS LOGIN] ---
-    // ข้ามการยิง API เช็ค Session ชั่วคราวเพื่อให้เทสหน้า UI ได้
-    setIsLoading(false);
-    return;
-    // ---------------------------
+    if (BYPASS_LOGIN) {
+      setIsLoading(false);
+      return;
+    }
 
     try {
       const token = localStorage.getItem('accessToken');
