@@ -7,7 +7,7 @@ import {db, initialize } from "./db/database";
 import { startMainStreamCorrectionSync, startMainStreamLatestSync } from "./services/mainStream";
 import { staticPlugin } from "@elysiajs/static";
 
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT) || 3000;
 
 // 1. ลองดึงค่า URL ของเว็บ Frontend เราจาก .env (ถ้าไม่มีให้ยอมรับหมดแบบชั่วคราวไปก่อน)
 const allowedOrigin = process.env.FRONTEND_URL ?? "*";
@@ -49,7 +49,7 @@ try {
         .use(userRoutes)
       )
       // รับ Request
-      .listen(port);
+      app.listen(port);
 
     console.log(`🦊 Elysia is running at port ${port}`);
 
