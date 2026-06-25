@@ -1,24 +1,23 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import DashboardPage from '../pages/DashboardPage';
-import Station from '../pages/Station';
-import styles from '../styles/NavBar.module.css';
+import DashboardPage from "../pages/DashboardPage";
+import Station from "../pages/Station";
+import styles from "../styles/NavBar.module.css";
 import MapGIS from "./MapGIS";
 
 // Component ส่วนเมนู
 const MenuBar = () => {
   const location = useLocation();
-  
+
   // Helper function: เช็ค Path เพื่อเลือก Class
   const getNavClass = (path: string) => {
     // ถ้า URL ปัจจุบันตรงกับ path ที่ส่งมา ให้เพิ่ม class .active
-    return location.pathname === path 
-      ? `${styles.navItem} ${styles.active}` 
+    return location.pathname === path
+      ? `${styles.navItem} ${styles.active}`
       : styles.navItem;
   };
 
   return (
     <nav className={styles.navbarContainer}>
-      
       {/* 1. Logo (ซ้ายสุด) */}
       <div className={styles.logoGroup}>
         <h1 className={styles.logoText}>Water Flow</h1>
@@ -27,25 +26,25 @@ const MenuBar = () => {
       {/* 2. กลุ่มเมนู (ตรงกลาง) */}
       <div className={styles.menuGroup}>
         {/* เมนู 1: แดชบอร์ด */}
-        <Link to="/" className={getNavClass('/')}>
+        <Link to="/" className={getNavClass("/")}>
           <span className={styles.navTitle}>แดชบอร์ด</span>
           <span className={styles.navSubtitle}>ภาพรวมของระบบ</span>
         </Link>
 
         {/* เมนู 2: แผนที่ GIS (สมมติ) */}
-        <Link to="/map" className={getNavClass('/map')}>
+        <Link to="/map" className={getNavClass("/map")}>
           <span className={styles.navTitle}>แผนที่ GIS</span>
           <span className={styles.navSubtitle}>มุมมองแผนที่</span>
         </Link>
 
         {/* เมนู 3: ข้อมูลสถานี */}
-        <Link to="/station" className={getNavClass('/station')}>
+        <Link to="/station" className={getNavClass("/station")}>
           <span className={styles.navTitle}>ข้อมูลสถานี</span>
           <span className={styles.navSubtitle}>ข้อมูลโดยละเอียด</span>
         </Link>
-        
+
         {/* เมนู 4: การตั้งค่า (สมมติ) */}
-        <Link to="/settings" className={getNavClass('/settings')}>
+        <Link to="/settings" className={getNavClass("/settings")}>
           <span className={styles.navTitle}>การตั้งค่า</span>
           <span className={styles.navSubtitle}>หน้าต่างตั้งค่า</span>
         </Link>
@@ -55,21 +54,24 @@ const MenuBar = () => {
       <div className={styles.rightGroup}>
         <div className={styles.searchBox}>
           <span className={styles.searchIcon}>🔍</span>
-          <input type="text" placeholder="Search" className={styles.searchInput} />
+          <input
+            type="text"
+            placeholder="Search"
+            className={styles.searchInput}
+          />
         </div>
-        <button 
+        <button
           className={styles.profileBtn}
           onClick={() => {
-            if(confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
-                localStorage.clear();
-                window.location.reload();
+            if (confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
+              localStorage.clear();
+              window.location.reload();
             }
           }}
         >
-          Username
+          Log out
         </button>
       </div>
-
     </nav>
   );
 };
@@ -84,10 +86,13 @@ function Navbar() {
       {/* ส่วนล่าง: เนื้อหา */}
       <div className={styles.contentArea}>
         <Routes>
-          <Route path='/' element={<DashboardPage />} />
-          <Route path='/station' element={<Station />} />
-          <Route path='/map' element={<MapGIS/>} />
-          <Route path='/settings' element={<div className="text-h1">หน้าการตั้งค่า (Demo)</div>} />
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/station" element={<Station />} />
+          <Route path="/map" element={<MapGIS />} />
+          <Route
+            path="/settings"
+            element={<div className="text-h1">หน้าการตั้งค่า (Demo)</div>}
+          />
         </Routes>
       </div>
     </div>
