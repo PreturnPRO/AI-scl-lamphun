@@ -1,16 +1,19 @@
 # ==========================================
-# Stage 1: Build Environment (เป็นห้องครัวปรุงโค้ด)
+# Stage 1: Build Environment 
 # ==========================================
 FROM oven/bun:1 AS build
 
 WORKDIR /app
 
-# ใช้ Layer Caching เหมือนเดิม
+# 1. ก๊อปปี้ไฟล์รายชื่อไลบรารี่มาก่อน เพื่อใช้ประโยชน์จาก Layer Cache
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-# เอาโค้ดทั้งหมดเข้ามาแล้วสั่ง Build ให้กลายเป็น Static Files (สมมติว่าโฟลเดอร์ผลลัพธ์ชื่อ dist)
+# 2. เอาโค้ดทั้งหมดเข้ามา
 COPY . .
+
+# 3. สั่ง Build ให้กลายเป็น Static Files 
+# (ตรวจสอบใน vite.config.ts อีกทีนะครับว่าโฟลเดอร์ผลลัพธ์ชื่อ dist ใช่ไหม)
 RUN bun run build
 
 # ==========================================
@@ -18,11 +21,14 @@ RUN bun run build
 # ==========================================
 FROM nginx:alpine
 
-# ก๊อปปี้แค่ไฟล์ Static ที่ Build เสร็จแล้วจาก Stage 1 มาใส่ในโฟลเดอร์ที่ Nginx ใช้เสิร์ฟเว็บ
+# 4. ก๊อปปี้แค่ไฟล์ Static ที่ Build เสร็จแล้วจาก Stage 1 มาใส่ในโฟลเดอร์ที่ Nginx ใช้เสิร์ฟเว็บ
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# เปิดพอร์ต 80 (พอร์ตมาตรฐานของ HTTP)
+# 5. ก๊อปปี้ไฟล์ตั้งค่า nginx.conf ของเรา ไปทับไฟล์ Default ของระบบ Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 6. เปิดพอร์ต 80 (พอร์ตมาตรฐานของ HTTP)
 EXPOSE 80
 
-# สั่งให้ Nginx ทำงานแบบ Background
+# 7. สั่งให้ Nginx ทำงานแบบ Background
 CMD ["nginx", "-g", "daemon off;"]

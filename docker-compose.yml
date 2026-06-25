@@ -5,16 +5,17 @@ services:
     image: postgres:16-alpine
     restart: always
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: adminUser123
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
     volumes:
       - data:/var/lib/postgresql/data
 
   backend:
     # 1. สั่งให้ Compose ไปใช้ "พิมพ์เขียว" ที่เราเพิ่งสร้าง
     build: 
-      context: ./Backend
+      context: ./Backend       # ชี้ขอบเขตการทำงานเข้าไปในโฟลเดอร์ Backend
+      dockerfile: Dockerfile
     
     # 2. Override (เขียนทับ) คำสั่ง CMD ใน Dockerfile
     # เปลี่ยนจากการรันธรรมดา เป็นการรันแบบ --watch เพื่อให้เหมาะกับการ Dev บนเครื่องเรา
@@ -41,6 +42,7 @@ services:
   frontend:
     build: 
       context: ./Frontend
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     depends_on:

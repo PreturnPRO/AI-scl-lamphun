@@ -11,7 +11,6 @@ COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile --production
 
 COPY --chown=bun:bun . .
-
 # 4. สลับไปใช้ User ธรรมดาที่ไม่ใช่ Root เพื่อป้องกันโดนแฮกแล้วยึดเครื่อง
 USER bun
 
