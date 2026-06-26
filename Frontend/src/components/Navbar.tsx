@@ -1,106 +1,97 @@
 import { Routes, Route, Link, useLocation } from "react-router-dom";
-import DashboardPage from "../pages/DashboardPage";
-import Station from "../pages/Station";
-import styles from "../styles/NavBar.module.css";
+import DashboardPage from '../pages/DashboardPage';
+import Station from '../pages/Station';
+import styles from '../styles/NavBar.module.css';
 import MapGIS from "./MapGIS";
 
 // Component ส่วนเมนู
 const MenuBar = () => {
   const location = useLocation();
-
+  
+  // Helper function: เช็ค Path เพื่อเลือก Class
   const getNavClass = (path: string) => {
-    return location.pathname === path
-      ? `${styles.navItem} ${styles.active}`
+    // ถ้า URL ปัจจุบันตรงกับ path ที่ส่งมา ให้เพิ่ม class .active
+    return location.pathname === path 
+      ? `${styles.navItem} ${styles.active}` 
       : styles.navItem;
   };
 
   return (
     <nav className={styles.navbarContainer}>
-      {/* 1. Logo */}
+      
+      {/* 1. Logo (ซ้ายสุด) */}
       <div className={styles.logoGroup}>
         <h1 className={styles.logoText}>Water Flow</h1>
       </div>
 
-      {/* 2. Menu */}
+      {/* 2. กลุ่มเมนู (ตรงกลาง) */}
       <div className={styles.menuGroup}>
-        <Link to="/" className={getNavClass("/")}>
+        {/* เมนู 1: แดชบอร์ด */}
+        <Link to="/" className={getNavClass('/')}>
           <span className={styles.navTitle}>แดชบอร์ด</span>
           <span className={styles.navSubtitle}>ภาพรวมของระบบ</span>
         </Link>
-        <Link to="/map" className={getNavClass("/map")}>
+
+        {/* เมนู 2: แผนที่ GIS (สมมติ) */}
+        <Link to="/map" className={getNavClass('/map')}>
           <span className={styles.navTitle}>แผนที่ GIS</span>
           <span className={styles.navSubtitle}>มุมมองแผนที่</span>
         </Link>
-        <Link to="/station" className={getNavClass("/station")}>
+
+        {/* เมนู 3: ข้อมูลสถานี */}
+        <Link to="/station" className={getNavClass('/station')}>
           <span className={styles.navTitle}>ข้อมูลสถานี</span>
           <span className={styles.navSubtitle}>ข้อมูลโดยละเอียด</span>
         </Link>
-        <Link to="/settings" className={getNavClass("/settings")}>
+        
+        {/* เมนู 4: การตั้งค่า (สมมติ) */}
+        <Link to="/settings" className={getNavClass('/settings')}>
           <span className={styles.navTitle}>การตั้งค่า</span>
           <span className={styles.navSubtitle}>หน้าต่างตั้งค่า</span>
         </Link>
       </div>
 
-      {/* 3. Search & Log out */}
+      {/* 3. Search & Profile (ขวาสุด) */}
       <div className={styles.rightGroup}>
         <div className={styles.searchBox}>
-          <svg
-            className={styles.searchIcon}
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Search"
-            className={styles.searchInput}
-          />
+          <span className={styles.searchIcon}>🔍</span>
+          <input type="text" placeholder="Search" className={styles.searchInput} />
         </div>
-        <button
+        <button 
           className={styles.profileBtn}
           onClick={() => {
-            if (confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
-              localStorage.clear();
-              window.location.reload();
+            if(confirm("ต้องการออกจากระบบใช่หรือไม่?")) {
+                localStorage.clear();
+                window.location.reload();
             }
           }}
         >
-          Log out
+          Username
         </button>
       </div>
+
     </nav>
   );
 };
 
-// Layout wrapper ที่รู้จัก path ปัจจุบัน
-const Layout = () => {
-  const location = useLocation();
-  const isMap = location.pathname === "/map";
-
+// Component หลัก
+function Navbar() {
   return (
     <div className={styles.layoutContainer}>
+      {/* ส่วนบน: Navbar */}
       <MenuBar />
-      <div
-        className={isMap ? styles.contentAreaFullHeight : styles.contentArea}
-      >
+
+      {/* ส่วนล่าง: เนื้อหา */}
+      <div className={styles.contentArea}>
         <Routes>
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/map" element={<MapGIS />} />
-          <Route path="/station" element={<Station />} />
-          <Route
-            path="/settings"
-            element={<div className="text-h1">หน้าการตั้งค่า (Demo)</div>}
-          />
+          <Route path='/' element={<DashboardPage />} />
+          <Route path='/station' element={<Station />} />
+          <Route path='/map' element={<MapGIS/>} />
+          <Route path='/settings' element={<div className="text-h1">หน้าการตั้งค่า (Demo)</div>} />
         </Routes>
       </div>
     </div>
   );
-};
+}
 
-export default Layout;
+export default Navbar;

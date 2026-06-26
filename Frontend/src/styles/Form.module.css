@@ -1,10 +1,36 @@
 .loginPage {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    background: var(--color-darkSlate);
-    display: flex;
-    flex-direction: column;
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-darkSlate);
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 15px 43px;
+  gap: 10px;
+  width: 100%;
+  height: 77px;
+  background: rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  z-index: 10;
+  position: relative;
+}
+
+.navLogoText {
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  text-align: center;
+  color: var(--color-text-onBrand);
+  margin: 0;
 }
 
 .navbar {
@@ -34,44 +60,52 @@
 }
 
 .mainContent {
-    display: flex;
-    flex: 1;
-    min-height: 0;
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
 .brandPanel {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 40px;
-    background: var(--brand-panel-gradient);
-    box-sizing: border-box;
-    min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  background: var(--brand-panel-gradient);
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .brandContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0px 36px;
-    gap: 40px;
-    max-width: 328px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px 36px;
+  gap: 40px;
+  max-width: 328px;
 }
 
 .brandLogo {
-    width: 85px;
-    height: 107px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 85px;
+  height: 107px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .brandLogoImg {
-    width: 85px;
-    height: 107px;
-    object-fit: contain;
+  width: 85px;
+  height: 107px;
+  object-fit: contain;
+}
+
+.brandTextBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  gap: 8px;
 }
 
 .brandTextBox {
@@ -83,287 +117,308 @@
 }
 
 .brandTitle {
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 700;
-    font-size: 48px;
-    line-height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    letter-spacing: -0.96px;
-    color: var(--color-text-onBrand);
-    margin: 0;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  letter-spacing: -0.96px;
+  color: var(--color-text-onBrand);
+  margin: 0;
 }
 
 .brandShadow {
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 28px;
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 28px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
 }
 
 .signInPanel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-    padding: 0;
-    box-sizing: border-box;
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 0;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .formCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 29px 0;
-    gap: 37px;
-    width: 418px;
-    background: var(--color-bg-page);
-    box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 30px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 29px 0;
+  gap: 37px;
+  width: 418px;
+  background: var(--color-bg-page);
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 30px;
+  box-sizing: border-box;
 }
 
 .signinTitle {
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 32px;
-    text-align: center;
-    color: var(--color-text-primary);
-    margin: 0;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  text-align: center;
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
 .formContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 0 72px;
-    gap: 37px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 72px;
+  gap: 37px;
+  box-sizing: border-box;
 }
 
 .fieldsContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    gap: 20px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: 10px;
+  box-sizing: border-box;
 }
 
 .inputGroup {
-    width: 100%;
+  width: 100%;
+  position: relative;
+  height: 95px;
 }
 
 .inputLabel {
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 600;
-    font-size: 20px;
-    line-height: 28px;
-    color: var(--color-text-primary);
-    margin: 0 0 9px 0;
-    display: block;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  color: var(--color-text-primary);
+  margin: 0;
+  display: block;
 }
 
 .inputWrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    filter: drop-shadow(0px 2px 15px rgba(0, 0, 0, 0.1));
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 290px;
+  height: 35px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 37px;
+  filter: drop-shadow(0px 2px 15px rgba(0, 0, 0, 0.1));
 }
 
 .input {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 12px 22px;
-    gap: 10px;
-    width: 290px;
-    height: 35px;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 100px;
-    border: none;
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--color-text-primary);
-    outline: none;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12px 22px;
+  gap: 10px;
+  width: 290px;
+  height: 35px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 100px;
+  border: none;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-primary);
+  outline: none;
+  box-sizing: border-box;
 }
 
 .input:focus {
-    background: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 0 2px var(--color-brand-secondary);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 2px var(--color-brand-secondary);
 }
 
 .input::placeholder {
-    color: var(--color-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .actionsContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0;
-    gap: 10px;
-    width: 274px;
-    height: 80px;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  gap: 10px;
+  width: 274px;
+  height: 80px;
+  box-sizing: border-box;
 }
 
 .buttonRow {
-    width: 274px;
-    height: 36px;
-    position: relative;
+  width: 274px;
+  height: 36px;
+  position: relative;
 }
 
 .button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    width: 274px;
-    height: 36px;
-    background: var(--color-brand-secondary);
-    border-radius: 100px;
-    border: none;
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
-    text-align: center;
-    color: var(--color-text-primary);
-    cursor: pointer;
-    transition: opacity 0.2s;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 274px;
+  height: 36px;
+  background: var(--color-brand-secondary);
+  border-radius: 100px;
+  border: none;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: opacity 0.2s;
 }
 
 .button:hover {
-    opacity: 0.9;
+  opacity: 0.9;
 }
 
 .button:disabled {
-    background-color: var(--color-text-disabled);
-    cursor: not-allowed;
-    opacity: 0.5;
+  background-color: var(--color-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .forgotPassword {
-    font-family: var(--font-ui);
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 20px;
-    color: var(--color-text-secondary);
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 0;
+  font-family: var(--font-ui);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .forgotPassword:hover {
-    color: var(--color-text-primary);
+  color: var(--color-text-primary);
 }
 
 .error {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--color-status-critical);
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    font-size: 14px;
-    text-align: center;
-    width: 100%;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--color-status-critical);
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+  width: 100%;
 }
 
 @media (max-width: 900px) {
-    .mainContent {
-        flex-direction: column;
-        align-items: center;
-    }
+  .mainContent {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .brandPanel {
-        padding: 40px 20px;
-        min-height: 300px;
-    }
+  .brandPanel {
+    padding: 40px 20px;
+    min-height: 300px;
+    width: 100%;
+  }
 
-    .brandTitle {
-        font-size: 36px;
-        line-height: 44px;
-    }
+  .brandTitle {
+    font-size: 36px;
+    line-height: 44px;
+  }
 
-    .signInPanel {
-        width: 100%;
-        padding: 0 16px 24px;
-    }
+  .signInPanel {
+    width: 100%;
+    padding: 0 16px 24px;
+  }
 
-    .formCard {
-        width: 100%;
-        max-width: 418px;
-    }
+  .formCard {
+    width: 100%;
+    max-width: 418px;
+  }
 
-    .formContent {
-        padding: 0 32px;
-    }
+  .formContent {
+    padding: 0 32px;
+  }
 
-    .input {
-        width: 100%;
-    }
+  .inputWrapper {
+    width: 100%;
+  }
 
-    .actionsContainer {
-        width: 100%;
-    }
+  .input {
+    width: 100%;
+  }
 
-    .button {
-        width: 100%;
-    }
+  .actionsContainer {
+    width: 100%;
+  }
+
+  .button {
+    width: 100%;
+  }
 }
 
 @media (max-width: 600px) {
-    .navbar {
-        padding: 15px 20px;
-    }
+  .navbar {
+    padding: 15px 20px;
+  }
 
-    .formCard {
-        border-radius: 20px 20px 0 0;
-    }
+  .formCard {
+    border-radius: 20px 20px 0 0;
+  }
 
-    .formContent {
-        padding: 0 20px;
-    }
+  .formContent {
+    padding: 0 20px;
+  }
 
-    .brandLogo {
-        width: 60px;
-        height: 75px;
-    }
+  .brandLogo {
+    width: 60px;
+    height: 75px;
+  }
 
-    .brandLogoImg {
-        width: 60px;
-        height: 75px;
-    }
+  .brandLogoImg {
+    width: 60px;
+    height: 75px;
+  }
 
-    .brandTitle {
-        font-size: 28px;
-        line-height: 36px;
-    }
+  .brandTitle {
+    font-size: 28px;
+    line-height: 36px;
+  }
 
-    .inputLabel {
-        font-size: 16px;
-        line-height: 24px;
-    }
+  .inputLabel {
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  .inputGroup {
+    height: auto;
+  }
+
+  .inputWrapper {
+    position: static;
+    height: auto;
+  }
 }
