@@ -37,7 +37,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(errorText || 'เข้าสู่ระบบไม่สำเร็จ');
+                throw new Error(errorText || 'usernammeหรือรหัสผ่านของคุณไม่ถูกต้อง');
             }
 
             const data: LoginResponse = await response.json();
