@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import styles from '../styles/Form.module.css';
+import logoImg from '../assets/image.png';
 
 interface LoginFormProps {
   onLoginSuccess?: (userId: number) => void;
