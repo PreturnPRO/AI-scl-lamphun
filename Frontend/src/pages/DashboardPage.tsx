@@ -1,6 +1,6 @@
 // src/pages/DashboardPage.tsx
 
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import StationTable from '../components/Dashboard-StationTable';
 import { DeviceService, MockDeviceService, type DeviceRangeData, type RainProbabilityData } from '../service/deviceService';
 import WaterLevelChart from '../components/WaterLevelChart';
@@ -31,7 +31,6 @@ const DashboardPage = () => {
     const [probData, setProbData] = useState<RainProbabilityData[]>([]);
     
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const probScrollRef = useRef<HTMLDivElement>(null);
 
     const handleDataUpdate = useCallback((water: number, rain: number) => {
         setWaterValue(water.toFixed(3));
@@ -86,17 +85,6 @@ const DashboardPage = () => {
                 setRainHistory(rainRes || []);
                 setProbData(probRes || []);
 
-                setTimeout(() => {
-                    if (probScrollRef.current) {
-                        const bangkokNow = new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok', hour: 'numeric', hour12: false });
-                        const currentHour = parseInt(bangkokNow, 10);
-                        const rowIndex = currentHour >= 1 ? currentHour - 1 : 23;
-                        const rowHeight = 26;
-                        const headerHeight = 0;
-                        probScrollRef.current.scrollTop = Math.max(0, rowIndex * rowHeight - headerHeight);
-                    }
-                }, 100);
-
             } catch (error) {
                 console.error("Error fetching dashboard data:", error);
             } finally {
@@ -144,20 +132,17 @@ const DashboardPage = () => {
                 <div className={styles.topRight}>
                     <div className={styles.probTableCard}>
                         <div className={styles.probHeader}>เปอร์เซ็นต์การเกิดฝน</div>
-                        <div className={styles.probGridHeader}>
+                        <div className={styles.probGrid}>
                             <div className={styles.probTimeCol}>time</div>
                             <div>Sun</div><div>M</div><div>Tu</div><div>W</div><div>Th</div><div>Fr</div><div>St</div>
-                        </div>
-                        <div className={styles.probScrollArea} ref={probScrollRef}>
-                            <div className={styles.probGrid}>
-                                {probData.map((row, idx) => (
-                                    <span key={idx} className={styles.probRowContents}>
-                                        <div className={styles.probTimeCol}>{row.time}</div>
-                                        <div>{row.sun}</div><div>{row.mon}</div><div>{row.tue}</div>
-                                        <div>{row.wed}</div><div>{row.thu}</div><div>{row.fri}</div><div>{row.sat}</div>
-                                    </span>
-                                ))}
-                            </div>
+                            
+                            {probData.map((row, idx) => (
+                                <span key={idx} className={styles.probRowContents}>
+                                    <div className={styles.probTimeCol}>{row.time}</div>
+                                    <div>{row.sun}</div><div>{row.mon}</div><div>{row.tue}</div>
+                                    <div>{row.wed}</div><div>{row.thu}</div><div>{row.fri}</div><div>{row.sat}</div>
+                                </span>
+                            ))}
                         </div>
                     </div>
                 </div>
