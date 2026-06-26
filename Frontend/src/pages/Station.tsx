@@ -5,11 +5,8 @@ import {
 } from 'recharts';
 import MapView from '../components/MapView';
 import type { StationData as MapStationData } from '../components/MapView';
-import { DeviceService, MockDeviceService, type DeviceInfoResponse, type DeviceRangeData } from '../service/deviceService';
+import { DeviceService, type DeviceInfoResponse, type DeviceRangeData, type StationDeviceInfo } from '../service/deviceService';
 import styles from '../styles/StationPage.module.css';
-
-// *** ตัวสลับโหมด: true = ใช้ข้อมูลจำลอง, false = ต่อ API จริง ***
-const USE_MOCK_DATA = true;
 
 // --- Interface สำหรับข้อมูลกราฟที่ผ่านการแปลงแล้ว ---
 interface ChartDataPoint {
@@ -51,6 +48,7 @@ const StationPage: React.FC = () => {
 
   // State ข้อมูลสถานีจาก API
   const [stationInfo, setStationInfo] = useState<DeviceInfoResponse | null>(null);
+  const [stations, setStations] = useState<StationDeviceInfo[]>([]);
   const [deviceId, setDeviceId] = useState<string>('');
 
   // State ข้อมูลประวัติสำหรับกราฟ
@@ -68,34 +66,61 @@ const StationPage: React.FC = () => {
       setErrorMessage(null);
 
       try {
-        const envDeviceId = import.meta.env.VITE_API_DEVICE_ID || 'MOCK_DEVICE_001';
-        const secretKey = import.meta.env.VITE_API_deviceSecretKey || 'MOCK_KEY';
-        setDeviceId(envDeviceId);
-
+        const secretKey =
+          import.meta.env.VITE_API_deviceSecretKey || "MOCK_KEY";
         const endTime = Date.now();
-        const startTime = endTime - 24 * 60 * 60 * 1000; // ย้อนหลัง 24 ชั่วโมง
+        const startTime = endTime - 24 * 60 * 60 * 1000;
 
-        let infoResult, waterResult, rainResult;
+        console.log("🟢 Station Mode: Using getStations() API");
 
-        if (USE_MOCK_DATA) {
-          console.log('🟡 Station Mode: Using MOCK Data');
-          infoResult = await MockDeviceService.getStationInfo(envDeviceId);
-          [waterResult, rainResult] = await Promise.all([
-            MockDeviceService.getHistory(envDeviceId, secretKey, 'water_level', startTime, endTime),
-            MockDeviceService.getHistory(envDeviceId, secretKey, 'rain_fall', startTime, endTime),
-          ]);
-        } else {
-          console.log('🟢 Station Mode: Using REAL API');
-          infoResult = await DeviceService.getStationInfo(envDeviceId);
-          [waterResult, rainResult] = await Promise.all([
-            DeviceService.getHistory(envDeviceId, secretKey, 'water_level', startTime, endTime),
-            DeviceService.getHistory(envDeviceId, secretKey, 'rain_fall', startTime, endTime),
-          ]);
+        // Get stations from API
+        const stationDevices = await DeviceService.getStations();
+
+        if (stationDevices.length === 0) {
+          setErrorMessage("ไม่พบสถานี");
+          setIsLoading(false);
+          return;
         }
 
-        setStationInfo(infoResult);
-        setWaterHistory(waterResult || []);
-        setRainHistory(rainResult || []);
+        setStations(stationDevices);
+        setDeviceId(stationDevices[0].deviceId);
+
+        // Set station info from first station
+        setStationInfo({
+          monitorName: stationDevices[0].monitorItem,
+          customName: stationDevices[0].stationName,
+          warningLevel: 0,
+          deviceLocation: {
+            latitude: stationDevices[0].latitude,
+            longitude: stationDevices[0].longitude
+          }
+        });
+
+        // Fetch history for all devices
+        const waterData: DeviceRangeData[] = [];
+        const rainData: DeviceRangeData[] = [];
+
+        await Promise.all(
+          stationDevices.map(async (device) => {
+            const data = await DeviceService.getHistory(
+              device.deviceId,
+              secretKey,
+              device.monitorItem,
+              startTime,
+              endTime
+            );
+
+            const lowerMonitor = device.monitorItem.toLowerCase();
+            if (lowerMonitor.includes('water') || lowerMonitor.includes('nw_')) {
+              waterData.push(...data);
+            } else {
+              rainData.push(...data);
+            }
+          })
+        );
+
+        setWaterHistory(waterData);
+        setRainHistory(rainData);
       } catch (error) {
         console.error('Error fetching station data:', error);
         setErrorMessage('ไม่สามารถโหลดข้อมูลสถานีได้ กรุณาลองใหม่อีกครั้ง');
@@ -109,19 +134,26 @@ const StationPage: React.FC = () => {
 
   // --- แปลงข้อมูล API มาเป็นรูปแบบที่ MapView ต้องการ ---
   const mapStations: MapStationData[] = useMemo(() => {
-    if (!stationInfo) {
+    if (stations.length === 0) {
       return [];
     }
-    return [
-      {
-        id: deviceId,
-        name: stationInfo.customName || stationInfo.monitorName || 'Unknown Station',
-        lat: Number(stationInfo.deviceLocation?.latitude) || 18.575,
-        lng: Number(stationInfo.deviceLocation?.longitude) || 99.008,
-        status: 'active' as const,
-      },
-    ];
-  }, [stationInfo, deviceId]);
+
+    // Group by stationId and create unique stations
+    const uniqueStations = new Map<string, MapStationData>();
+    for (const s of stations) {
+      if (!uniqueStations.has(s.stationId)) {
+        uniqueStations.set(s.stationId, {
+          id: s.stationId,
+          name: s.stationName || 'Unknown Station',
+          lat: parseFloat(s.latitude) || 18.575,
+          lng: parseFloat(s.longitude) || 99.008,
+          status: 'active' as const,
+        });
+      }
+    }
+
+    return Array.from(uniqueStations.values());
+  }, [stations]);
 
   // --- แปลงข้อมูลประวัติมาเป็นรูปแบบที่กราฟต้องการ ---
   const waterChartData: ChartDataPoint[] = useMemo(() => {
