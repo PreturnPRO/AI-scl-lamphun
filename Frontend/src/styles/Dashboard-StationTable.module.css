@@ -54,3 +54,49 @@
     text-align: right;
     justify-content: flex-end;
 }
+
+.loadingText {
+    color: var(--color-text-secondary);
+    text-align: center;
+    padding: 20px;
+}
+
+.emptyText {
+    color: var(--color-text-secondary);
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.exportContainer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 12px 24px 0;
+}
+
+.exportButton {
+    padding: 4px 14px;
+    background-color: var(--color-text-onBrand);
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-bg-page);
+    letter-spacing: 0.3px;
+}
+
+.statusText {
+    margin-left: 8px;
+    font-size: 10px;
+}
+
+.statusCritical {
+    color: var(--color-status-critical);
+}
+
+.statusWarning {
+    color: var(--color-status-warning);
+}
