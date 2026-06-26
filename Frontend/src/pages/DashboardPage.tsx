@@ -7,6 +7,7 @@ import {
   type DeviceRangeData,
   type RainProbabilityData,
   type StationDeviceInfo,
+  type StationLatestInfo,
 } from "../service/deviceService";
 import WaterLevelChart from "../components/WaterLevelChart";
 import DataCard from "../components/DataCard";
@@ -42,10 +43,10 @@ const DashboardPage = () => {
 
         console.log("🟢 Mode: Using Real API (USE_MOCK_DATA=false)");
 
-        // Get stations data from API
-        const stationDevices = await DeviceService.getStations();
+        // Get latest stations data (includes latest values for DataCards)
+        const latestData = await DeviceService.getLatestStations();
 
-        if (stationDevices.length === 0) {
+        if (latestData.length === 0) {
           console.warn("No stations found");
           setStationName("No stations");
           setWaterHistory([]);
@@ -55,16 +56,46 @@ const DashboardPage = () => {
           return;
         }
 
-        // Set station name from first station
-        setStationName(stationDevices[0].stationName || "Station");
-        setStations(stationDevices);
+        // Set latest values for DataCards
+        const waterDevice = latestData.find(s =>
+          s.monitorItem.toLowerCase().includes('nw_') || s.monitorItem.toLowerCase().includes('water')
+        );
+        const rainDevice = latestData.find(s =>
+          s.monitorItem.toLowerCase().includes('yl_') || s.monitorItem.toLowerCase().includes('rain')
+        );
+        if (waterDevice?.monitorValue) {
+          setWaterValue(parseFloat(waterDevice.monitorValue).toFixed(3));
+        }
+        if (rainDevice?.monitorValue) {
+          setRainValue(parseFloat(rainDevice.monitorValue).toFixed(3));
+        }
 
-        // Group devices by station and query data
+        // Set station name from first station
+        setStationName(latestData[0].stationName || "Station");
+
+        // Get unique stations
+        const uniqueStationsMap = new Map<string, StationDeviceInfo>();
+        for (const item of latestData) {
+          if (!uniqueStationsMap.has(item.stationId)) {
+            uniqueStationsMap.set(item.stationId, {
+              stationId: item.stationId,
+              stationName: item.stationName,
+              latitude: item.latitude,
+              longitude: item.longitude,
+              deviceId: item.deviceId,
+              deviceName: item.deviceName,
+              monitorItem: item.monitorItem
+            });
+          }
+        }
+        setStations(Array.from(uniqueStationsMap.values()));
+
+        // Group devices by station and query data for charts
         const waterData: DeviceRangeData[] = [];
         const rainData: DeviceRangeData[] = [];
 
         await Promise.all(
-          stationDevices.map(async (device) => {
+          latestData.map(async (device) => {
             const data = await DeviceService.getHistory(
               device.deviceId,
               secretKey,
@@ -73,7 +104,6 @@ const DashboardPage = () => {
               endTime
             );
 
-            // Separate water vs rain by monitorItem
             const lowerMonitor = device.monitorItem.toLowerCase();
             if (lowerMonitor.includes('water') || lowerMonitor.includes('nw_')) {
               waterData.push(...data);

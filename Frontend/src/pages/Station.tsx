@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import MapView from '../components/MapView';
 import type { StationData as MapStationData } from '../components/MapView';
-import { DeviceService, type DeviceInfoResponse, type DeviceRangeData, type StationDeviceInfo } from '../service/deviceService';
+import { DeviceService, type DeviceInfoResponse, type DeviceRangeData, type StationDeviceInfo, type StationLatestInfo } from '../service/deviceService';
 import styles from '../styles/StationPage.module.css';
 
 // --- Interface สำหรับข้อมูลกราฟที่ผ่านการแปลงแล้ว ---
@@ -49,6 +49,7 @@ const StationPage: React.FC = () => {
   // State ข้อมูลสถานีจาก API
   const [stationInfo, setStationInfo] = useState<DeviceInfoResponse | null>(null);
   const [stations, setStations] = useState<StationDeviceInfo[]>([]);
+  const [latestStations, setLatestStations] = useState<StationLatestInfo[]>([]);
   const [deviceId, setDeviceId] = useState<string>('');
 
   // State ข้อมูลประวัติสำหรับกราฟ
@@ -71,37 +72,55 @@ const StationPage: React.FC = () => {
         const endTime = Date.now();
         const startTime = endTime - 24 * 60 * 60 * 1000;
 
-        console.log("🟢 Station Mode: Using getStations() API");
+        console.log("🟢 Station Mode: Using getLatestStations() API");
 
-        // Get stations from API
-        const stationDevices = await DeviceService.getStations();
+        // Get latest stations data from API (includes latest values + signal/battery)
+        const latestData = await DeviceService.getLatestStations();
 
-        if (stationDevices.length === 0) {
+        if (latestData.length === 0) {
           setErrorMessage("ไม่พบสถานี");
           setIsLoading(false);
           return;
         }
 
+        setLatestStations(latestData);
+
+        // Get unique stations for map
+        const uniqueStationsMap = new Map<string, StationDeviceInfo>();
+        for (const item of latestData) {
+          if (!uniqueStationsMap.has(item.stationId)) {
+            uniqueStationsMap.set(item.stationId, {
+              stationId: item.stationId,
+              stationName: item.stationName,
+              latitude: item.latitude,
+              longitude: item.longitude,
+              deviceId: item.deviceId,
+              deviceName: item.deviceName,
+              monitorItem: item.monitorItem
+            });
+          }
+        }
+        const stationDevices = Array.from(uniqueStationsMap.values());
         setStations(stationDevices);
-        setDeviceId(stationDevices[0].deviceId);
+        setDeviceId(latestData[0].deviceId);
 
         // Set station info from first station
         setStationInfo({
-          monitorName: stationDevices[0].monitorItem,
-          customName: stationDevices[0].stationName,
+          monitorName: latestData[0].monitorItem,
+          customName: latestData[0].stationName,
           warningLevel: 0,
           deviceLocation: {
-            latitude: stationDevices[0].latitude,
-            longitude: stationDevices[0].longitude
+            latitude: latestData[0].latitude,
+            longitude: latestData[0].longitude
           }
         });
 
-        // Fetch history for all devices
+        // Fetch history for all devices (for charts)
         const waterData: DeviceRangeData[] = [];
         const rainData: DeviceRangeData[] = [];
 
         await Promise.all(
-          stationDevices.map(async (device) => {
+          latestData.map(async (device) => {
             const data = await DeviceService.getHistory(
               device.deviceId,
               secretKey,
@@ -177,18 +196,39 @@ const StationPage: React.FC = () => {
 
   // --- คำนวณค่าล่าสุดของระดับน้ำ (สำหรับแสดงในตาราง) ---
   const latestWaterValue = useMemo(() => {
-    if (waterHistory.length === 0) {
-      return '-';
-    }
-    return parseFloat(waterHistory[0].monitorValue).toFixed(3);
-  }, [waterHistory]);
+    const waterDevice = latestStations.find(s =>
+      s.monitorItem.toLowerCase().includes('nw_') || s.monitorItem.toLowerCase().includes('water')
+    );
+    return waterDevice?.monitorValue ? parseFloat(waterDevice.monitorValue).toFixed(3) : '-';
+  }, [latestStations]);
 
   const latestRainValue = useMemo(() => {
-    if (rainHistory.length === 0) {
-      return '-';
-    }
-    return parseFloat(rainHistory[0].monitorValue).toFixed(3);
-  }, [rainHistory]);
+    const rainDevice = latestStations.find(s =>
+      s.monitorItem.toLowerCase().includes('yl_') || s.monitorItem.toLowerCase().includes('rain')
+    );
+    return rainDevice?.monitorValue ? parseFloat(rainDevice.monitorValue).toFixed(3) : '-';
+  }, [latestStations]);
+
+  const latestSignal = useMemo(() => {
+    const waterDevice = latestStations.find(s =>
+      s.monitorItem.toLowerCase().includes('nw_') || s.monitorItem.toLowerCase().includes('water')
+    );
+    return waterDevice?.signal || 'offline';
+  }, [latestStations]);
+
+  const latestBattery = useMemo(() => {
+    const waterDevice = latestStations.find(s =>
+      s.monitorItem.toLowerCase().includes('nw_') || s.monitorItem.toLowerCase().includes('water')
+    );
+    return waterDevice?.battery ?? 0;
+  }, [latestStations]);
+
+  const latestReportTime = useMemo(() => {
+    const waterDevice = latestStations.find(s =>
+      s.monitorItem.toLowerCase().includes('nw_') || s.monitorItem.toLowerCase().includes('water')
+    );
+    return waterDevice?.monitorTime || '';
+  }, [latestStations]);
 
 /*  const latestWaterStatus = useMemo(() => {
     if (waterHistory.length === 0) {
@@ -296,20 +336,21 @@ const StationPage: React.FC = () => {
               </div>
 
               <div className={styles.colTime}>
-                {waterHistory.length > 0
-                  ? new Date(waterHistory[0].monitorTime).toLocaleTimeString('en-GB', {
+                {latestReportTime
+                  ? new Date(latestReportTime).toLocaleTimeString('en-GB', {
                       hour: '2-digit',
                       minute: '2-digit',
                     })
                   : '-'}
               </div>
 
-              <div className={`${styles.colSignal} ${styles.iconGood}`}>
-                <i className="bi bi-reception-4"></i>
+              <div className={`${styles.colSignal} ${latestSignal === 'online' ? styles.iconGood : styles.iconBad}`}>
+                <i className={latestSignal === 'online' ? 'bi bi-reception-4' : 'bi bi-reception-1'}></i>
               </div>
 
-              <div className={`${styles.colBattery} ${styles.iconGood}`}>
-                <i className="bi bi-battery-full"></i>
+              <div className={`${styles.colBattery} ${latestBattery > 0 ? styles.iconGood : styles.iconBad}`}>
+                <i className={latestBattery > 0 ? 'bi bi-battery-full' : 'bi bi-battery-empty'}></i>
+                {latestBattery > 0 ? '' : '0%'}
               </div>
 
               <div className={`${styles.colWater} ${getWaterStatusClass(parseFloat(latestWaterValue))}`}>

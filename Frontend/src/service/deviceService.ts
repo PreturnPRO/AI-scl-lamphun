@@ -57,6 +57,13 @@ export interface StationDeviceInfo {
   monitorItem: string;
 }
 
+export interface StationLatestInfo extends StationDeviceInfo {
+  monitorValue: string;
+  monitorTime: string;
+  signal: 'online' | 'offline';
+  battery: number;
+}
+
 const API_BASE_URL = '/api/v2/device';
 
 const getHeaders = () => {
@@ -153,6 +160,18 @@ export const DeviceService = {
       return [];
     }
     const response = await fetch('/api/v2/stations/', {
+      method: 'GET',
+      headers: getHeaders(),
+    });
+    const result = await handleResponse(response);
+    return result.data || [];
+  },
+
+  getLatestStations: async (): Promise<StationLatestInfo[]> => {
+    if (USE_MOCK_DATA) {
+      return [];
+    }
+    const response = await fetch('/api/v2/stations/latest', {
       method: 'GET',
       headers: getHeaders(),
     });
