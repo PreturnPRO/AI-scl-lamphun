@@ -28,13 +28,13 @@ export interface DeviceInfoResponse {
 
 export interface RainProbabilityData {
   time: string;
-  sun: string;
-  mon: string;
-  tue: string;
-  wed: string;
-  thu: string;
-  fri: string;
-  sat: string;
+  sun: number;
+  mon: number;
+  tue: number;
+  wed: number;
+  thu: number;
+  fri: number;
+  sat: number;
 }
 
 // 2. Helper Functions
@@ -108,9 +108,47 @@ export const DeviceService = {
     return response.json();
   },
 
-  getRainProbability: async (): Promise<RainProbabilityData[]> => {
-    // สำหรับเชื่อมต่อ API จริงในอนาคต ตอนนี้ให้ return mock ไปก่อน
-    return MockDeviceService.getRainProbability();
+  getRainProbability: async (lat: number = 18.586659, lng: number = 99.023166): Promise<RainProbabilityData[]> => {
+    try {
+      const res = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&hourly=precipitation_probability&timezone=Asia/Bangkok&forecast_days=7`
+      );
+      if (!res.ok) throw new Error(`Open-Meteo API Error: ${res.status}`);
+      const json = await res.json();
+
+      const times: string[] = json.hourly.time;
+      const probs: number[] = json.hourly.precipitation_probability;
+
+      const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+
+      const startDate = new Date(times[0] + '+07:00');
+      const startDow = startDate.getDay();
+
+      const result: RainProbabilityData[] = [];
+
+      for (let h = 1; h <= 24; h++) {
+        const hour = h % 24;
+        const row: RainProbabilityData = {
+          time: `${String(hour).padStart(2, '0')}:00`,
+          sun: 0, mon: 0, tue: 0, wed: 0, thu: 0, fri: 0, sat: 0,
+        };
+
+        for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+          const dow = (startDow + dayOffset) % 7;
+          const idx = dayOffset * 24 + hour;
+          if (idx < probs.length && probs[idx] != null) {
+            (row as any)[dayKeys[dow]] = Math.round(probs[idx]);
+          }
+        }
+
+        result.push(row);
+      }
+
+      return result.length > 0 ? result : MockDeviceService.getRainProbability();
+    } catch (error) {
+      console.error('Failed to fetch rain probability from Open-Meteo:', error);
+      return MockDeviceService.getRainProbability();
+    }
   }
 };
 
@@ -167,12 +205,22 @@ export const MockDeviceService = {
 
   getRainProbability: async (): Promise<RainProbabilityData[]> => {
     await new Promise(resolve => setTimeout(resolve, 500));
-    return [
-        { time: '09:00', sun: '00', mon: '00', tue: '00', wed: '00', thu: '00', fri: '00', sat: '00' },
-        { time: '10:00', sun: '00', mon: '00', tue: '00', wed: '00', thu: '00', fri: '00', sat: '00' },
-        { time: '11:00', sun: '00', mon: '00', tue: '00', wed: '00', thu: '00', fri: '00', sat: '00' },
-        { time: '12:00', sun: '00', mon: '00', tue: '00', wed: '00', thu: '00', fri: '00', sat: '00' },
-    ];
+    const rows: RainProbabilityData[] = [];
+    for (let h = 1; h <= 24; h++) {
+      const hour = h % 24;
+      const base = hour >= 6 && hour <= 18 ? 30 : 10;
+      rows.push({
+        time: `${String(hour).padStart(2, '0')}:00`,
+        sun: Math.round(base + Math.random() * 40),
+        mon: Math.round(base + Math.random() * 40),
+        tue: Math.round(base + Math.random() * 40),
+        wed: Math.round(base + Math.random() * 40),
+        thu: Math.round(base + Math.random() * 40),
+        fri: Math.round(base + Math.random() * 40),
+        sat: Math.round(base + Math.random() * 40),
+      });
+    }
+    return rows;
   }
 };
 
