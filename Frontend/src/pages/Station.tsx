@@ -158,7 +158,7 @@ const StationPage: React.FC = () => {
     return parseFloat(rainHistory[0].monitorValue).toFixed(3);
   }, [rainHistory]);
 
-  const latestWaterStatus = useMemo(() => {
+/*  const latestWaterStatus = useMemo(() => {
     if (waterHistory.length === 0) {
       return 'normal';
     }
@@ -166,7 +166,7 @@ const StationPage: React.FC = () => {
     if (value >= 5.0) return 'critical';
     if (value >= 4.5) return 'warning';
     return 'normal';
-  }, [waterHistory]);
+  }, [waterHistory]); */
 
   // --- Render ---
   if (isLoading) {

@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 // --- Main Component ---
 export const WaterLevelChart: React.FC<WaterLevelChartProps> = ({ onDataUpdate }) => {
   const [data, setData] = useState<WaterData[]>([]);
-  const [currentWater, setCurrentWater] = useState<number | null>(null);
+  const [/*currentWater*/, setCurrentWater] = useState<number | null>(null);
   const dataRef = useRef<WaterData[]>([]);
   
   // ตัวแปรจำค่าฝนสะสม (เริ่มที่ 0) - กู้คืนจากโค้ดทีม

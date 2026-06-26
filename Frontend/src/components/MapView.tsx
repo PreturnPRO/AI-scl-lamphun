@@ -45,9 +45,9 @@ const FitBoundsToMarkers = ({ stations }: { stations: StationData[] }) => {
 // --- Main Component ---
 function MapView({ stations = [] }: MapViewProps) {
   
-  const handleViewDetails = (id: string | number) => {
+  /* const handleViewDetails = (id: string | number) => {
       console.log("Navigating to sensor details:", id);
-  };
+  }; */
 
   return (
     <div className={styles.mapContainer}>

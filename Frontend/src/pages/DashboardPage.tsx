@@ -15,8 +15,8 @@ const USE_MOCK_DATA = true;
 const DashboardPage = () => {
     // State ข้อมูลสถานี - กู้คืนจากโค้ดทีม
     const [stationName, setStationName] = useState<string>("Loading Station...");
-    const [deviceId, setDeviceId] = useState<string>("UNKNOWN_ID");
-    const [location, setLocation] = useState<{lat: number, lng: number}>({
+    const [deviceId] = useState<string>("UNKNOWN_ID");
+    const [location, /*setLocation*/] = useState<{lat: number, lng: number}>({
         lat: 18.586659, 
         lng: 99.023166
     });
@@ -44,29 +44,36 @@ const DashboardPage = () => {
                 // อ่าน Environment Variables
                 const envDeviceId = import.meta.env.VITE_API_DEVICE_ID || "MOCK_DEVICE_001"; 
                 const secretKey = import.meta.env.VITE_API_deviceSecretKey || "MOCK_KEY"; 
-                setDeviceId(envDeviceId);
-
-                let infoRes, waterRes, rainRes, probRes;
                 const endTime = Date.now();
-                const startTime = endTime - (24 * 60 * 60 * 1000); // 24 ชม.
+                const startTime = endTime - (24 * 60 * 60 * 1000);
+
+                let infoRes;
+                let waterRes;
+                let rainRes;
+                let probRes;
+
+                
+                
 
                 // --- เลือกโหมด Mock หรือ Real ---
-                if (USE_MOCK_DATA) {
+                    if (USE_MOCK_DATA) {
                     console.log("🟡 Mode: Using MOCK Data");
                     infoRes = await MockDeviceService.getStationInfo(envDeviceId);
-                    [waterRes, rainRes, probRes] = await Promise.all([
+                    const results = await Promise.all([
                         MockDeviceService.getHistory(envDeviceId, secretKey, "water_level", startTime, endTime),
                         MockDeviceService.getHistory(envDeviceId, secretKey, "rain_fall", startTime, endTime),
                         MockDeviceService.getRainProbability()
                     ]);
+                    [waterRes, rainRes, probRes] = results; // ใช้การ Destructure ผลลัพธ์
                 } else {
                     console.log("🟢 Mode: Using REAL API");
                     infoRes = await DeviceService.getStationInfo(envDeviceId);
-                    [waterRes, rainRes, probRes] = await Promise.all([
+                    const results = await Promise.all([
                         DeviceService.getHistory(envDeviceId, secretKey, "water_level", startTime, endTime),
                         DeviceService.getHistory(envDeviceId, secretKey, "rain_fall", startTime, endTime),
                         DeviceService.getRainProbability()
                     ]);
+                    [waterRes, rainRes, probRes] = results;
                 }
 
                 // --- อัปเดต State ---
@@ -86,12 +93,11 @@ const DashboardPage = () => {
                 setProbData(probRes || []);
 
             } catch (error) {
-                console.error("Error fetching dashboard data:", error);
+                console.error("Error:", error);
             } finally {
                 setIsLoading(false);
             }
         };
-
         fetchData();
     }, []);
 

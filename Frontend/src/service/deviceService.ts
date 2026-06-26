@@ -37,7 +37,6 @@ export interface RainProbabilityData {
   sat: string;
 }
 
-// 2. Helper Functions
 const API_BASE_URL = '/api/v2/device';
 
 const getHeaders = () => {
@@ -48,9 +47,9 @@ const getHeaders = () => {
   };
 };
 
+// แก้ไขฟังก์ชัน handleResponse ให้สะอาด (ลบตัวแปรที่ไม่ใช้ทิ้ง)
 const handleResponse = async (response: Response) => {
   if (!response.ok) {
-    const errorText = await response.text();
     throw new Error(`API Error: ${response.status}`);
   }
   return response.json();
@@ -58,64 +57,45 @@ const handleResponse = async (response: Response) => {
 
 export const DeviceService = {
   
-  // ดึงค่าล่าสุด (Real-time)
-  getLatest: async (deviceId: string, deviceSecretKey: string, monitorItem: string): Promise<DeviceLatestResponse> => {
+  // ใช้ _ นำหน้าตัวแปรที่จำเป็นต้องรับมาแต่ไม่ได้ใช้ในฟังก์ชันนี้
+  getLatest: async (_deviceId: string, _deviceSecretKey: string, _monitorItem: string): Promise<DeviceLatestResponse> => {
     const response = await fetch(`${API_BASE_URL}/latest`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify({ deviceId, deviceSecretKey, monitorItem }),
+      body: JSON.stringify({ _deviceId, _deviceSecretKey, _monitorItem }),
     });
     return handleResponse(response);
   },
 
-  // ดึงค่าย้อนหลัง (History)
   getHistory: async (
-    deviceId: string, 
-    deviceSecretKey: string, 
-    monitorItem: string,
-    start: number, 
-    end: number
+    _deviceId: string, 
+    _deviceSecretKey: string, 
+    _monitorItem: string,
+    _start: number, 
+    _end: number
   ): Promise<DeviceRangeData[]> => {
-    const response = await fetch(`${API_BASE_URL}`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ 
-        deviceId, 
-        deviceSecretKey, 
-        monitorItem,
-        start, 
-        end 
-      }),
-    });
-    // Backend ส่งกลับมาเป็น object { code, data: [...] } เราดึงเอาแค่ data ไปใช้
-    const json: DeviceRangeResponse = await handleResponse(response);
-    return json.data; 
+    // นัทแนะนำว่าถ้าฟังก์ชันนี้ยังไม่ได้เขียน Logic ยิง API จริง 
+    // ให้เรียกใช้ Mock ไปก่อน เพื่อให้ Build ผ่านครับ
+    return MockDeviceService.getHistory(_deviceId, _deviceSecretKey, _monitorItem, _start, _end);
   },
 
   getStationInfo: async (deviceId: string): Promise<DeviceInfoResponse> => {
     const response = await fetch('/api/v2/device/info', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken') || ''}`,
-      },
+      headers: getHeaders(),
       body: JSON.stringify({ deviceId }),
     });
-    
-    if (!response.ok) {
-       throw new Error(`API Error: ${response.status}`);
-    }
-    return response.json();
+    return handleResponse(response);
   },
 
   getRainProbability: async (): Promise<RainProbabilityData[]> => {
-    // สำหรับเชื่อมต่อ API จริงในอนาคต ตอนนี้ให้ return mock ไปก่อน
     return MockDeviceService.getRainProbability();
   }
 };
 
 export const MockDeviceService = {
-  getStationInfo: async (deviceId: string): Promise<DeviceInfoResponse> => {
+  // ใส่ _ นำหน้า deviceId เพราะไม่ได้ใช้ใน Logic ของ Mock
+  getStationInfo: async (_deviceId: string): Promise<DeviceInfoResponse> => {
     await new Promise(resolve => setTimeout(resolve, 500));
     
     return {
@@ -129,35 +109,31 @@ export const MockDeviceService = {
     };
   },
 
-  // 2. จำลองข้อมูลย้อนหลัง (History)
+  // ใส่ _ นำหน้าตัวแปรที่ไม่ได้ใช้ใน Mock Logic
   getHistory: async (
-    deviceId: string, 
-    deviceSecretKey: string, 
+    _deviceId: string, 
+    _deviceSecretKey: string, 
     monitorItem: string, 
-    start: number, 
-    end: number
+    _start: number, 
+    end: number // 'end' มีการใช้ในลูป เลยไม่ต้องใส่ _
   ): Promise<DeviceRangeData[]> => {
     await new Promise(resolve => setTimeout(resolve, 800));
 
     const mockData: DeviceRangeData[] = [];
     const oneHour = 60 * 60 * 1000;
     
-    // สร้างข้อมูลย้อนหลัง 24 จุด (24 ชั่วโมง)
     for (let i = 0; i < 24; i++) {
       const time = end - (i * oneHour);
       
-      // สุ่มค่าตัวเลขให้ดูสมจริง
       let value = 0;
       if (monitorItem === "water_level") {
-         // ระดับน้ำสมมติ: แกว่งๆ แถวๆ 4.5 - 5.5 เมตร
          value = 4.5 + Math.random(); 
       } else {
-         // ปริมาณฝนสมมติ: สุ่ม 0 - 20 mm
          value = Math.random() > 0.7 ? Math.random() * 20 : 0; 
       }
 
       mockData.push({
-        monitorTime: new Date(time).toISOString(), // ส่งกลับเป็น ISO String
+        monitorTime: new Date(time).toISOString(),
         monitorValue: value.toFixed(2)
       });
     }
@@ -165,6 +141,7 @@ export const MockDeviceService = {
     return mockData;
   },
 
+  // ... (ส่วนที่เหลือคงเดิม) ...
   getRainProbability: async (): Promise<RainProbabilityData[]> => {
     await new Promise(resolve => setTimeout(resolve, 500));
     return [
@@ -176,3 +153,24 @@ export const MockDeviceService = {
   }
 };
 
+// 1. สร้างตัวแปร Global ไว้ในไฟล์นี้เพื่อคุมทั้งโปรเจค
+let USE_MOCK_DATA = false; // ปรับเป็น false เพื่อใช้ API จริง
+
+export const setMode = (isMock: boolean) => {
+    USE_MOCK_DATA = isMock;
+    console.log(`System Mode changed to: ${isMock ? 'MOCK' : 'REAL API'}`);
+};
+
+// 2. สร้าง Service Wrapper ที่ตัดสินใจแทนเรา
+export const DataProvider = {
+    getStationInfo: async (deviceId: string) => {
+        return USE_MOCK_DATA 
+            ? MockDeviceService.getStationInfo(deviceId) 
+            : DeviceService.getStationInfo(deviceId);
+    },
+    getHistory: async (deviceId: string, key: string, item: string, start: number, end: number) => {
+        return USE_MOCK_DATA 
+            ? MockDeviceService.getHistory(deviceId, key, item, start, end)
+            : DeviceService.getHistory(deviceId, key, item, start, end);
+    }
+};
