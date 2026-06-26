@@ -1,14 +1,18 @@
 // src/components/Station/StationTable.tsx
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Settings } from 'lucide-react';
-import { type StationData } from './Station'; 
+import type { StationData } from './Station';
 
 interface StationTableProps {
-  stations: StationData[]; 
-  onEdit: (station: StationData) => void; // สัญญาว่าต้องส่งฟังก์ชันนี้มาให้ด้วย
+  stations: StationData[];
+  onEdit: (station: StationData) => void;
 }
 
-const StationTable: React.FC<StationTableProps> = ({ stations, onEdit }) => {
+const StationTable: React.FC<StationTableProps> = React.memo(({ stations, onEdit }) => {
+  const handleEdit = useCallback((station: StationData) => {
+    onEdit(station);
+  }, [onEdit]);
+
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>
       <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: '0 8px', textAlign: 'center', color: 'var(--color-text-primary)' }}>
@@ -27,7 +31,7 @@ const StationTable: React.FC<StationTableProps> = ({ stations, onEdit }) => {
             stations.map((item, index) => (
               <tr key={item.id || index} style={{ backgroundColor: 'var(--color-bg-surface)' }}>
                 <td style={{ padding: '16px 20px', textAlign: 'left', borderRadius: '24px 0 0 24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Settings size={18} style={{ color: 'var(--color-text-secondary)', cursor: 'pointer' }} onClick={() => onEdit(item)} />
+                  <Settings size={18} style={{ color: 'var(--color-text-secondary)', cursor: 'pointer' }} onClick={() => handleEdit(item)} />
                   {item.name}
                 </td>
                 <td style={{ padding: '16px 0' }}>
@@ -63,6 +67,6 @@ const StationTable: React.FC<StationTableProps> = ({ stations, onEdit }) => {
       </table>
     </div>
   );
-};
+});
 
 export default StationTable;
