@@ -4,7 +4,8 @@ import Navbar from './components/Navbar'
 import LoginPage from './pages/LoginPage.tsx';
 
 function App() {
-  const BYPASS_LOGIN = true; // Bypass login ชั่วคราวตามที่ขอครับ
+  const BYPASS_LOGIN =
+    import.meta.env.DEV && import.meta.env.VITE_BYPASS_LOGIN === 'true';
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(BYPASS_LOGIN);
   

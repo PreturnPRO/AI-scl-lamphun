@@ -130,8 +130,28 @@ const StationTable: React.FC<StationTableProps> = ({
   return (
     <div className={styles.container}>
       {/* ส่วนหัวของตาราง พร้อมปุ่ม Export CSV ที่กู้คืนมาจัดวางให้เข้ากับ UI ใหม่ */}
-      <div className={styles.exportContainer}>
-        <button onClick={handleExportCSV} className={styles.exportButton}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "flex-end",
+          padding: "12px 24px 0",
+        }}
+      >
+        <button
+          onClick={handleExportCSV}
+          style={{
+            padding: "4px 14px",
+            backgroundColor: "#FFFFFF",
+            border: "none",
+            borderRadius: "40px",
+            cursor: "pointer",
+            fontFamily: "'Inter', system-ui, sans-serif",
+            fontSize: "12px",
+            fontWeight: "600",
+            color: "#111827",
+            letterSpacing: "0.3px",
+          }}
+        >
           Export CSV
         </button>
       </div>
