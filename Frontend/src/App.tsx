@@ -4,13 +4,13 @@ import Navbar from './components/Navbar'
 import LoginPage from './pages/LoginPage.tsx';
 
 function App() {
-  const BYPASS_LOGIN =
-    import.meta.env.DEV && import.meta.env.VITE_BYPASS_LOGIN === 'true';
+  const BYPASS_LOGIN = true; // Bypass login ชั่วคราวตามที่ขอครับ
 
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(BYPASS_LOGIN);
   
-  const [userId, setUserId] = useState<number | null>(null); 
+  const [userId, setUserId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  void userId;
 
   const checkSession = async () => {
     if (BYPASS_LOGIN) {
@@ -73,7 +73,7 @@ function App() {
       {!isLoggedIn ? (
         <LoginPage onLoginSuccess={handleLoginSuccess} />
       ) : (
-        <Navbar />
+        <Navbar/>
       )}
     </BrowserRouter>
   );

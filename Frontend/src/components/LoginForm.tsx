@@ -66,7 +66,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
                 <div className={styles.brandPanel}>
                     <div className={styles.brandContainer}>
                         <div className={styles.brandLogo}>
-                            <img src={logoImg} alt="Water Flow Logo" className={styles.brandLogoImg} />
+                            <img src="/logo.png" alt="Water Flow Logo" className={styles.brandLogoImg} />
                         </div>
                         <div className={styles.brandTextBox}>
                             <h1 className={styles.brandTitle}>Water<br/>Flow</h1>
