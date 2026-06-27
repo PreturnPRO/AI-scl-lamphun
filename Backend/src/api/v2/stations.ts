@@ -1,6 +1,7 @@
 import { Elysia, t } from 'elysia'
 import { jwt } from '@elysiajs/jwt'
-import { eq, and, desc, sql } from 'drizzle-orm/sql/expressions/conditions'
+import { eq, and, sql } from 'drizzle-orm/sql/expressions/conditions'
+import { desc } from 'drizzle-orm'
 import { db } from '../../db/database'
 import { stationDevices, devices, deviceData } from '../../db/schema'
 import { toUtcPlus7String } from '../../services/mainStream'
