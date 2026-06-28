@@ -20,8 +20,8 @@ const StationTable: React.FC<StationTableProps> = React.memo(({ stations, onEdit
           <tr style={{ color: 'var(--color-text-secondary)', fontSize: '14px', borderBottom: '1px solid var(--color-border-line)' }}>
             <th style={{ padding: '12px', textAlign: 'left', width: '30%' }}>ชื่อสถานี</th>
             <th style={{ padding: '12px' }}>เวลา</th>
-            <th style={{ padding: '12px' }}>📶</th>
-            <th style={{ padding: '12px' }}>☁️</th>
+            <th style={{ padding: '12px' }}>สัญญาณ</th>
+            <th style={{ padding: '12px' }}>แบตเตอรี่</th>
             <th style={{ padding: '12px' }}>ระดับน้ำ(เมตร)</th>
             <th style={{ padding: '12px' }}>ปริมาณน้ำฝน(มิลลิเมตร/ชั่วโมง)</th>
           </tr>

@@ -154,31 +154,8 @@ const StationTable: React.FC<StationTableProps> = React.memo(({
       <div className={styles.tableHeader}>
         <div>ชื่อสถานี</div>
         <div>เวลา</div>
-        <div className={`${styles.iconCell} ${styles.centerAlign}`}>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path d="M2 20h20M5 20v-4M9 20v-8M13 20v-12M17 20v-16" />
-          </svg>
-        </div>
-        <div className={`${styles.iconCell} ${styles.centerAlign}`}>
-          <svg
-            width="24"
-            height="14"
-            viewBox="0 0 24 14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <rect x="2" y="2" width="18" height="10" rx="2" />
-            <path d="M22 5v4" />
-          </svg>
-        </div>
+        <div className={styles.iconCell}>สัญญาณ</div>
+        <div className={styles.iconCell}>แบตเตอรี่</div>
         <div className={styles.centerAlign}>ระดับน้ำ(เมตร)</div>
         <div className={styles.centerAlign}>ปริมาณน้ำฝน(มิลลิเมตร/ชั่วโมง)</div>
       </div>
@@ -205,32 +182,8 @@ const StationTable: React.FC<StationTableProps> = React.memo(({
               </div>
               <div>{row.timestamp}</div>
 
-              <div className={`${styles.iconCell} ${styles.centerAlign}`}>
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M2 20h20M5 20v-4M9 20v-8M13 20v-12M17 20v-16" />
-                </svg>
-              </div>
-
-              <div className={`${styles.iconCell} ${styles.centerAlign}`}>
-                <svg
-                  width="24"
-                  height="14"
-                  viewBox="0 0 24 14"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <rect x="2" y="2" width="18" height="10" rx="2" />
-                  <path d="M22 5v4" />
-                </svg>
-              </div>
+              <div className={styles.iconCell}>สัญญาณ</div>
+              <div className={styles.iconCell}>แบตเตอรี่</div>
 
               <div className={styles.centerAlign}>{row.waterLevel}</div>
               <div className={styles.centerAlign}>{row.rainfall}</div>

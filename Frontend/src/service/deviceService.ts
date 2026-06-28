@@ -101,19 +101,30 @@ export const DeviceService = {
     if (USE_MOCK_DATA) {
       return MockDeviceService.getHistory(_deviceId, _deviceSecretKey, _monitorItem, _start, _end);
     }
-    const response = await fetch(`${API_BASE_URL}/`, {
+    const response = await fetch(`${API_BASE_URL}/batch`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({
-        deviceId: _deviceId,
-        deviceSecretKey: _deviceSecretKey,
-        monitorItem: _monitorItem,
+        deviceList: [{
+          deviceId: _deviceId,
+          deviceSecretKey: _deviceSecretKey,
+          monitorItem: _monitorItem
+        }],
         start: _start,
         end: _end
       }),
     });
     const result = await handleResponse(response);
-    return result.data || [];
+    const deviceResult = result.data?.find((d: { deviceId: string }) => d.deviceId === _deviceId);
+    if (!deviceResult?.data) return [];
+    console.log(`[getHistory] deviceId=${_deviceId}, monitorItem=${_monitorItem}, records=${deviceResult.data.length}`);
+    console.log(`[getHistory] sample monitorItems:`, deviceResult.data.slice(0, 3).map((d: { monitorItem: string }) => d.monitorItem));
+    return deviceResult.data
+      .filter((item: { monitorItem: string }) => item.monitorItem === _monitorItem)
+      .map(({ monitorValue, monitorTime }: { monitorValue: string; monitorTime: string }) => ({
+        monitorValue,
+        monitorTime
+      }));
   },
 
   getStationInfo: async (deviceId: string): Promise<DeviceInfoResponse> => {

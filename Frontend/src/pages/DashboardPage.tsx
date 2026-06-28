@@ -7,7 +7,6 @@ import {
   type DeviceRangeData,
   type RainProbabilityData,
   type StationDeviceInfo,
-  type StationLatestInfo,
 } from "../service/deviceService";
 import WaterLevelChart from "../components/WaterLevelChart";
 import DataCard from "../components/DataCard";
@@ -56,22 +55,22 @@ const DashboardPage = () => {
           return;
         }
 
-        // Set latest values for DataCards
-        const waterDevice = latestData.find(s =>
-          s.monitorItem.toLowerCase().includes('nw_') || s.monitorItem.toLowerCase().includes('water')
-        );
-        const rainDevice = latestData.find(s =>
-          s.monitorItem.toLowerCase().includes('yl_') || s.monitorItem.toLowerCase().includes('rain')
-        );
-        if (waterDevice?.monitorValue) {
-          setWaterValue(parseFloat(waterDevice.monitorValue).toFixed(3));
-        }
-        if (rainDevice?.monitorValue) {
-          setRainValue(parseFloat(rainDevice.monitorValue).toFixed(3));
-        }
-
         // Set station name from first station
         setStationName(latestData[0].stationName || "Station");
+
+        // Use monitorValue from /stations/latest for DataCards (most recent reading per device)
+        const waterDevice = latestData.find(s =>
+          s.monitorItem?.toLowerCase().includes('nw_') ||
+          s.monitorItem?.toLowerCase().includes('water') ||
+          s.monitorItem?.toLowerCase().includes('wl')
+        );
+        const rainDevice = latestData.find(s =>
+          !s.monitorItem?.toLowerCase().includes('nw_') &&
+          !s.monitorItem?.toLowerCase().includes('water') &&
+          !s.monitorItem?.toLowerCase().includes('wl')
+        );
+        console.log('[DataCard] waterDevice:', waterDevice?.monitorItem, '=', waterDevice?.monitorValue);
+        console.log('[DataCard] rainDevice:', rainDevice?.monitorItem, '=', rainDevice?.monitorValue);
 
         // Get unique stations
         const uniqueStationsMap = new Map<string, StationDeviceInfo>();
@@ -104,20 +103,51 @@ const DashboardPage = () => {
               endTime
             );
 
+            console.log(`Device ${device.deviceId} (${device.monitorItem}): ${data.length} records`);
+
             const lowerMonitor = device.monitorItem.toLowerCase();
-            if (lowerMonitor.includes('water') || lowerMonitor.includes('nw_')) {
+            const isWaterDevice = lowerMonitor.includes('water') || lowerMonitor.includes('nw_') || lowerMonitor.includes('wl');
+
+            if (isWaterDevice) {
               waterData.push(...data);
+              console.log(`  → Added to waterData`);
             } else {
               rainData.push(...data);
+              console.log(`  → Added to rainData`);
             }
           })
         );
 
         console.log('Water data count:', waterData.length);
+        if (waterData.length > 0) {
+          console.log('Water sample values:', waterData.slice(0, 3).map(d => d.monitorValue));
+        }
         console.log('Rain data count:', rainData.length);
 
         setWaterHistory(waterData);
         setRainHistory(rainData);
+
+        const avgWater = waterData.length > 0
+          ? (waterData.reduce((sum, d) => sum + (parseFloat(d.monitorValue) || 0), 0) / waterData.length).toFixed(3)
+          : '---';
+        const avgRain = rainData.length > 0
+          ? (rainData.reduce((sum, d) => sum + (parseFloat(d.monitorValue) || 0), 0) / rainData.length).toFixed(3)
+          : '---';
+
+        console.log('[DataCard] waterData entries:', waterData.length, 'sample:', waterData.slice(0, 3).map(d => ({ v: d.monitorValue, t: d.monitorTime })));
+        console.log('[DataCard] avgWater:', avgWater, 'avgRain:', avgRain, '| latest waterDevice monitorValue:', waterDevice?.monitorValue);
+
+        // Use /stations/latest monitorValue directly (most recent reading per device)
+        const displayWater = (waterDevice?.monitorValue && waterDevice.monitorValue !== '')
+          ? parseFloat(waterDevice.monitorValue).toFixed(3)
+          : (avgWater !== '---' ? avgWater : '---');
+        const displayRain = (rainDevice?.monitorValue && rainDevice.monitorValue !== '')
+          ? parseFloat(rainDevice.monitorValue).toFixed(3)
+          : (avgRain !== '---' ? avgRain : '---');
+
+        setWaterValue(displayWater);
+        setRainValue(displayRain);
+
         setProbData([]);
       } catch (error) {
         console.error("Error:", error);
